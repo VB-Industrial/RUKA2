@@ -10,12 +10,21 @@ Two runtime profiles are planned:
   local visualization.
 
 The Ethernet-CAN host software creates SocketCAN-compatible `vcan1.x`
-interfaces. RUKA2 initially targets `vcan1.0` for the arm. Host IP, board
-hostname/IP, selected bus, and CAN FD bitrates must be supplied for a real
-deployment.
+interfaces. The initial board mapping is:
 
-Provisioning scripts and systemd units will be added after the target host is
-audited and the networking values are known.
+- `bus0` / `vcan1.0`: RUKA2 arm;
+- `bus1` / `vcan1.1`: gripper;
+- `bus2` / `vcan1.2`: reserved for the future powerboard implementation.
+
+The checked-in host-managed configuration in `ethernet-can/ruka1.json` targets
+the Raspberry Pi Ethernet address `192.168.30.146` and the board hostname
+`ruka1.local`. Its CAN FD profile is derived from the pinned RUKA2 joint
+firmware: 1 Mbit/s nominal, 8 Mbit/s data with BRS. The 10 ms integration
+period follows the upstream Ethernet-CAN host-managed example.
+
+The target host has been audited and validated with this configuration. Import
+of its generic provisioning scripts and systemd units remains separate from
+the board-specific JSON tracked here.
 
 The initial machine handoff prompt is stored in
 [`docs/raspberry-pi-handoff-prompt.md`](../../docs/raspberry-pi-handoff-prompt.md).

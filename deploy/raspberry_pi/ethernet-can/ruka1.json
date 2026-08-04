@@ -1,0 +1,16 @@
+{
+  "network": {
+    "host_ip": "192.168.30.146",
+    "device_ip": "ruka1.local",
+    "host_interface_map": {
+      "bus0": "vcan1.0",
+      "bus1": "vcan1.1",
+      "bus2": "vcan1.2"
+    }
+  },
+  "fdcan": {
+    "period_ns": 10000000,
+    "nominal_kbit": 1000,
+    "data_kbit": 8000
+  }
+}

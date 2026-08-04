@@ -69,13 +69,19 @@ hardware interface is declared compatible.
 
 The Raspberry Pi has no physical SocketCAN adapter. The separate Ethernet-CAN
 device transports CAN FD over UDP and the Linux host service exposes board
-buses as `vcan1.x` SocketCAN interfaces. The initial arm default is
-`vcan1.0`; final board bus mapping is deployment configuration.
+buses as `vcan1.x` SocketCAN interfaces. Board `ruka1.local` uses the following
+mapping on the target Raspberry Pi (`192.168.30.146`):
+
+- bus 0 / `vcan1.0`: arm;
+- bus 1 / `vcan1.1`: gripper;
+- bus 2 / `vcan1.2`: reserved powerboard transport (no application yet).
+
+All three buses use CAN FD with BRS at 1 Mbit/s nominal and 8 Mbit/s data. The
+Ethernet-CAN integration period is 10 ms. Board buses 3 through 5 are disabled.
 
 ## Deferred work
 
 - canonical RUKA2 URDF and meshes;
 - geometry-dependent `ruka2_description` implementation;
 - SRDF, kinematics, collision matrix, and MoveIt configuration;
-- final Ethernet-CAN addressing and bus/bitrate values;
 - final ROS DDS network parameters.
