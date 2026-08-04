@@ -18,7 +18,13 @@ def test_srdf_and_controller_contract_are_consistent():
     assert group is not None
     chain = group.find("chain")
     assert chain is not None
-    assert chain.attrib == {"base_link": "base_link", "tip_link": "tool0"}
+    assert chain.attrib == {"base_link": "base_link", "tip_link": "link_06"}
+
+    passive_joints = {joint.attrib["name"] for joint in srdf.findall("passive_joint")}
+    assert passive_joints == {
+        "link_hand_cyl__first_fin",
+        "link_hand_cyl__second_fin",
+    }
 
     home = srdf.find("./group_state[@name='home']")
     assert home is not None

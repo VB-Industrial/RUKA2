@@ -21,12 +21,23 @@
         </joint>
       </xacro:macro>
 
+      <xacro:macro name="ruka2_mock_passive_joint" params="joint_name">
+        <joint name="${joint_name}">
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+        </joint>
+      </xacro:macro>
+
       <xacro:ruka2_mock_joint joint_name="joint_1"/>
       <xacro:ruka2_mock_joint joint_name="joint_2"/>
       <xacro:ruka2_mock_joint joint_name="joint_3"/>
       <xacro:ruka2_mock_joint joint_name="joint_4"/>
       <xacro:ruka2_mock_joint joint_name="joint_5"/>
       <xacro:ruka2_mock_joint joint_name="joint_6"/>
+      <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__first_fin"/>
+      <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__second_fin"/>
     </ros2_control>
   </xacro:macro>
 </robot>

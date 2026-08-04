@@ -1,7 +1,6 @@
 # RUKA2 architecture contract
 
-Status: agreed baseline for repository scaffolding. Geometry-dependent details
-remain deliberately deferred.
+Status: active baseline for implementation and hardware integration.
 
 ## Product packages
 
@@ -22,29 +21,34 @@ ROS package names are lowercase. The product and repository name is RUKA2.
   - `workstation`: everything in `server`, plus MoveIt, RViz, and local
     visualization.
 
-The initial Raspberry Pi host starts from Ubuntu Server and will be extended
-with a supported desktop environment while retaining remote administration.
+The Raspberry Pi host runs Ubuntu 24.04 Desktop on ARM64 while retaining remote
+administration and both runtime roles.
 
 ## Robot description
 
-The canonical RUKA2 URDF is under development. It will be based on the
-SilverHand description but will not be copied as the final model.
-
-The future URDF is authoritative for:
+The canonical geometry baseline was delivered as `ruka.urdf` and imported into
+`ruka2_description`. The delivered source SHA-256 is
+`636ee55728b1e7bbe03136b55f579f75608bd8ef5503bfefcdde3c6f466c56f9`.
+It is authoritative for:
 
 - joint names and types;
 - joint axes and directions;
 - zero positions and position limits;
-- visual, collision, and inertial geometry;
+- visual and collision geometry;
 - the robot base frame;
-- the flange/tool frames;
-- optional sensor frames.
+- arm joint position and velocity limits.
+
+The six arm joints are normalized to `joint_1` through `joint_6`. The
+kinematic chain runs from `base_link` through `link_06`. Gripper and finger
+geometry remains present in the description, while gripper control and MoveIt
+integration are deferred. Arm-link inertials and a dedicated tool/TCP frame
+are also still pending.
 
 `base frame` means the coordinate frame fixed to the robot mounting base and
 used as the root for kinematics. `tool frame` means the reference frame at the
 working end of the manipulator, normally the flange or tool centre point used
-by MoveIt when planning an end-effector pose. Their final names and transforms
-are deferred until the canonical URDF arrives.
+by MoveIt when planning an end-effector pose. Until a dedicated flange/TCP is
+defined, MoveIt uses `link_06` as the arm tip.
 
 ## Firmware
 
@@ -81,7 +85,8 @@ Ethernet-CAN integration period is 10 ms. Board buses 3 through 5 are disabled.
 
 ## Deferred work
 
-- canonical RUKA2 URDF and meshes;
-- geometry-dependent `ruka2_description` implementation;
-- SRDF, kinematics, collision matrix, and MoveIt configuration;
+- arm-link inertial properties;
+- dedicated flange/tool/TCP frames;
+- gripper hardware and MoveIt integration;
+- final self-collision matrix validation;
 - final ROS DDS network parameters.

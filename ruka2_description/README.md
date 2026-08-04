@@ -3,10 +3,9 @@
 Canonical RUKA2 URDF/Xacro, meshes, collision geometry, inertials, frames, and
 standalone RViz viewer.
 
-The package currently contains an explicitly marked dummy six-axis model for
-infrastructure and launch testing. It is not a source of mechanical dimensions
-or limits. The dummy Xacro will be replaced when the canonical RUKA2 URDF is
-delivered.
+The package contains the canonical RUKA2 geometry baseline. The six arm axes
+are named `joint_1` through `joint_6`. Gripper and finger geometry is retained
+for future integration, but its joints are not part of the arm controller.
 
 ```bash
 ros2 launch ruka2_description display.launch.py

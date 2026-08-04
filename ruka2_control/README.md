@@ -3,8 +3,8 @@
 RUKA2 `ros2_control` hardware plugin, controller configuration, mock/real
 profiles, diagnostics, and bringup.
 
-The package currently provides a working mock `ros2_control` launch around the
-temporary model in `ruka2_description`:
+The package provides a working six-axis mock `ros2_control` launch around the
+canonical geometry in `ruka2_description`:
 
 ```bash
 ros2 launch ruka2_control mock.launch.py

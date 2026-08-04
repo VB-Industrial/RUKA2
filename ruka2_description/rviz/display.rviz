@@ -12,7 +12,7 @@ Visualization Manager:
       Plane: XY
       Reference Frame: base_link
     - Class: rviz_default_plugins/RobotModel
-      Name: Dummy RUKA2
+      Name: RUKA2
       Enabled: true
       Description Topic:
         Value: /robot_description

@@ -3,9 +3,9 @@
 MoveIt SRDF, kinematics, joint limits, planning pipelines, controller mapping,
 launch files, and RViz configuration for RUKA2.
 
-The package currently contains an explicitly temporary MoveIt configuration for
-the dummy model. It allows infrastructure, controller, planning, and RViz
-integration to be tested before the canonical RUKA2 URDF is delivered:
+The package configures the six-axis arm chain from `base_link` through
+`link_06`. The retained gripper finger joints are passive and are not part of
+the arm planning group or controller:
 
 ```bash
 ros2 launch ruka2_moveit_config demo.launch.py

@@ -47,12 +47,11 @@ colcon test
 colcon test-result --verbose
 ```
 
-The repository currently includes an explicitly temporary six-axis model and a
-working mock control/MoveIt path. The dummy geometry and limits exist only for
-software and deployment testing and will be replaced by the canonical RUKA2
-URDF.
+The repository includes the canonical RUKA2 geometry baseline and a working
+six-axis mock control/MoveIt path. Gripper geometry is retained for later work,
+but only the arm is currently planned and controlled.
 
-Dummy model viewer:
+Model viewer:
 
 ```bash
 ros2 launch ruka2_description display.launch.py
