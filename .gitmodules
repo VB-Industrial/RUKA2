@@ -1,0 +1,6 @@
+[submodule "ruka2_firmware"]
+	path = firmware/ruka2_firmware
+	url = https://github.com/VB-Industrial/silverhand_arm_firmware.git
+[submodule "third_party/libcxxcanard"]
+	path = third_party/libcxxcanard
+	url = https://github.com/VB-Industrial/libcxxcanard.git

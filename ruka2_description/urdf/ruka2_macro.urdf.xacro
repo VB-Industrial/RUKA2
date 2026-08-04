@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    TEMPORARY DUMMY MODEL.
+    Dimensions, masses, axes, limits, and transforms are only for software
+    integration tests and must not be used for hardware commissioning.
+  -->
+  <xacro:macro name="ruka2_dummy_link" params="name length:=0.16 radius:=0.035 color:='0.30 0.55 0.85 1'">
+    <link name="${name}">
+      <inertial>
+        <origin xyz="${length / 2.0} 0 0" rpy="0 0 0"/>
+        <mass value="0.25"/>
+        <inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0007" iyz="0" izz="0.0007"/>
+      </inertial>
+      <visual>
+        <origin xyz="${length / 2.0} 0 0" rpy="0 1.57079632679 0"/>
+        <geometry><cylinder radius="${radius}" length="${length}"/></geometry>
+        <material name="${name}_material"><color rgba="${color}"/></material>
+      </visual>
+      <collision>
+        <origin xyz="${length / 2.0} 0 0" rpy="0 1.57079632679 0"/>
+        <geometry><cylinder radius="${radius}" length="${length}"/></geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="ruka2_dummy" params="prefix:=''">
+    <link name="${prefix}base_link">
+      <visual>
+        <origin xyz="0 0 0.04"/>
+        <geometry><cylinder radius="0.08" length="0.08"/></geometry>
+        <material name="dummy_base"><color rgba="0.20 0.22 0.25 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.04"/>
+        <geometry><cylinder radius="0.08" length="0.08"/></geometry>
+      </collision>
+    </link>
+
+    <xacro:ruka2_dummy_link name="${prefix}link_1" length="0.18"/>
+    <xacro:ruka2_dummy_link name="${prefix}link_2" length="0.22"/>
+    <xacro:ruka2_dummy_link name="${prefix}link_3" length="0.20"/>
+    <xacro:ruka2_dummy_link name="${prefix}link_4" length="0.15" radius="0.03"/>
+    <xacro:ruka2_dummy_link name="${prefix}link_5" length="0.12" radius="0.028"/>
+    <xacro:ruka2_dummy_link name="${prefix}link_6" length="0.10" radius="0.025"/>
+
+    <joint name="${prefix}joint_1" type="revolute">
+      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}link_1"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-3.14159" upper="3.14159" effort="20" velocity="1.0"/>
+    </joint>
+    <joint name="${prefix}joint_2" type="revolute">
+      <origin xyz="0.18 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_1"/>
+      <child link="${prefix}link_2"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-2.6" upper="2.6" effort="20" velocity="1.0"/>
+    </joint>
+    <joint name="${prefix}joint_3" type="revolute">
+      <origin xyz="0.22 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_2"/>
+      <child link="${prefix}link_3"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-2.8" upper="2.8" effort="20" velocity="1.0"/>
+    </joint>
+    <joint name="${prefix}joint_4" type="revolute">
+      <origin xyz="0.20 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_3"/>
+      <child link="${prefix}link_4"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="-3.14159" upper="3.14159" effort="10" velocity="1.5"/>
+    </joint>
+    <joint name="${prefix}joint_5" type="revolute">
+      <origin xyz="0.15 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_4"/>
+      <child link="${prefix}link_5"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-2.6" upper="2.6" effort="10" velocity="1.5"/>
+    </joint>
+    <joint name="${prefix}joint_6" type="revolute">
+      <origin xyz="0.12 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_5"/>
+      <child link="${prefix}link_6"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="-3.14159" upper="3.14159" effort="5" velocity="2.0"/>
+    </joint>
+
+    <link name="${prefix}tool0"/>
+    <joint name="${prefix}tool0_joint" type="fixed">
+      <origin xyz="0.10 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_6"/>
+      <child link="${prefix}tool0"/>
+    </joint>
+  </xacro:macro>
+</robot>
