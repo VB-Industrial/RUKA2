@@ -67,9 +67,13 @@ repository. The ROS host uses the VB-Industrial `libcxxcanard` submodule at
 
 ## Communication baseline
 
-The current firmware is the source of truth. The subject and node table in
-`interfaces/cyphal.md` must be revalidated against firmware before the real
-hardware interface is declared compatible.
+The current firmware is the source of truth. The validated baseline is commit
+`95a7985eb131c2e4f3cae9331b51f92c67321301`; the complete host contract is in
+`interfaces/cyphal.md`.
+
+The Linux Cyphal transport is deliberately serviced synchronously from the
+`ros2_control` update path. No background RX/TX threads are used. This retains
+the proven SilverHand execution model and keeps commissioning deterministic.
 
 The Raspberry Pi has no physical SocketCAN adapter. The separate Ethernet-CAN
 device transports CAN FD over UDP and the Linux host service exposes board

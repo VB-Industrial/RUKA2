@@ -10,6 +10,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>diagnostic_msgs</depend>
   <depend>hardware_interface</depend>
   <depend>libcxxcanard</depend>
   <depend>pluginlib</depend>
@@ -17,7 +18,6 @@
   <depend>rclcpp_lifecycle</depend>
 
   <exec_depend>controller_manager</exec_depend>
-  <exec_depend>diagnostic_updater</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>launch</exec_depend>

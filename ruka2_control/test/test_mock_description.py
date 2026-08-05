@@ -30,6 +30,25 @@ def test_mock_hardware_exports_all_arm_joints():
             item.attrib["name"] for item in joint.findall("command_interface")
         ]
         if joint.attrib["name"] in ARM_JOINTS:
-            assert command_interfaces == ["position"]
+            assert command_interfaces == ["position", "velocity"]
         else:
             assert command_interfaces == []
+
+
+def test_real_hardware_exports_only_six_arm_joints():
+    result = subprocess.run(
+        [
+            "xacro",
+            str(PACKAGE_ROOT / "urdf/ruka2_control.urdf.xacro"),
+            "use_mock_hardware:=false",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    robot = ET.fromstring(result.stdout)
+    control = robot.find("ros2_control")
+    assert control is not None
+    assert control.findtext("hardware/plugin") == "ruka2_control/Ruka2System"
+    assert control.findtext("hardware/param[@name='can_interface']") == "vcan1.0"
+    assert {joint.attrib["name"] for joint in control.findall("joint")} == ARM_JOINTS

@@ -1,0 +1,8 @@
+<library path="ruka2_control">
+  <class
+    name="ruka2_control/Ruka2System"
+    type="ruka2_control::Ruka2System"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>Cyphal/CAN FD ros2_control system interface for the six-axis RUKA2 arm.</description>
+  </class>
+</library>

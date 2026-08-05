@@ -32,6 +32,7 @@ def test_srdf_and_controller_contract_are_consistent():
 
     limits = load_yaml("joint_limits.yaml")["joint_limits"]
     assert set(limits) == EXPECTED_JOINTS
+    assert all(limit["max_velocity"] == 0.1 for limit in limits.values())
 
     controllers = load_yaml("moveit_controllers.yaml")["moveit_simple_controller_manager"]
     assert controllers["controller_names"] == ["arm_controller"]

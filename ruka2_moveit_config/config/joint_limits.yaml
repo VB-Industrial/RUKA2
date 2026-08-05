@@ -1,37 +1,37 @@
 # Acceleration limits are inherited from the working SilverHand baseline until
-# RUKA2-specific mechanical limits are supplied. Velocity limits come from the
-# canonical RUKA2 URDF.
-default_velocity_scaling_factor: 0.1
+# RUKA2-specific mechanical limits are supplied. Firmware commit 95a7985 limits
+# servo mode to 0.1 rad/s on every joint.
+default_velocity_scaling_factor: 1.0
 default_acceleration_scaling_factor: 0.1
 
 joint_limits:
   joint_1:
     has_velocity_limits: true
-    max_velocity: 0.75
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 1.0
   joint_2:
     has_velocity_limits: true
-    max_velocity: 0.6
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 1.0
   joint_3:
     has_velocity_limits: true
-    max_velocity: 0.75
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 1.0
   joint_4:
     has_velocity_limits: true
-    max_velocity: 2.0
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 1.0
   joint_5:
     has_velocity_limits: true
-    max_velocity: 2.5
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 1.0
   joint_6:
     has_velocity_limits: true
-    max_velocity: 6.0
+    max_velocity: 0.1
     has_acceleration_limits: true
     max_acceleration: 2.0

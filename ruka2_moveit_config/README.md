@@ -11,5 +11,15 @@ the arm planning group or controller:
 ros2 launch ruka2_moveit_config demo.launch.py
 ```
 
+Use the real arm on the Raspberry Pi with:
+
+```bash
+ros2 launch ruka2_moveit_config demo.launch.py \
+  use_mock_hardware:=false can_interface:=vcan1.0
+```
+
+Set `start_control:=false` when MoveIt/RViz runs on a workstation and the
+controller manager is already running on the Raspberry Pi.
+
 It will support both an external controller manager and a self-contained local
 workstation launch on the Raspberry Pi.

@@ -1,19 +1,40 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="ruka2_mock_ros2_control" params="name initial_positions_file">
+  <xacro:macro
+    name="ruka2_ros2_control"
+    params="name initial_positions_file use_mock_hardware:=true can_interface:=vcan1.0 node_id:=100 queue_length:=1000 feedback_timeout:=0.25 heartbeat_timeout:=2.5 activation_timeout:=5.0 startup_grace:=1.0 require_all_joints_on_activate:=true">
     <xacro:property
       name="initial_positions"
       value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
 
+    <xacro:property
+      name="use_mock_hardware_bool"
+      value="${str(use_mock_hardware).lower() in ['true', '1', 'yes']}"/>
+
     <ros2_control name="${name}" type="system">
       <hardware>
-        <plugin>mock_components/GenericSystem</plugin>
-        <param name="calculate_dynamics">false</param>
+        <xacro:if value="${use_mock_hardware_bool}">
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">false</param>
+        </xacro:if>
+        <xacro:unless value="${use_mock_hardware_bool}">
+          <plugin>ruka2_control/Ruka2System</plugin>
+          <param name="can_interface">${can_interface}</param>
+          <param name="node_id">${node_id}</param>
+          <param name="queue_length">${queue_length}</param>
+          <param name="feedback_timeout">${feedback_timeout}</param>
+          <param name="heartbeat_timeout">${heartbeat_timeout}</param>
+          <param name="activation_timeout">${activation_timeout}</param>
+          <param name="startup_grace">${startup_grace}</param>
+          <param name="maximum_servo_velocity">0.1</param>
+          <param name="require_all_joints_on_activate">${require_all_joints_on_activate}</param>
+        </xacro:unless>
       </hardware>
 
-      <xacro:macro name="ruka2_mock_joint" params="joint_name">
+      <xacro:macro name="ruka2_arm_joint" params="joint_name">
         <joint name="${joint_name}">
           <command_interface name="position"/>
+          <command_interface name="velocity"/>
           <state_interface name="position">
             <param name="initial_value">${initial_positions[joint_name]}</param>
           </state_interface>
@@ -30,14 +51,16 @@
         </joint>
       </xacro:macro>
 
-      <xacro:ruka2_mock_joint joint_name="joint_1"/>
-      <xacro:ruka2_mock_joint joint_name="joint_2"/>
-      <xacro:ruka2_mock_joint joint_name="joint_3"/>
-      <xacro:ruka2_mock_joint joint_name="joint_4"/>
-      <xacro:ruka2_mock_joint joint_name="joint_5"/>
-      <xacro:ruka2_mock_joint joint_name="joint_6"/>
-      <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__first_fin"/>
-      <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__second_fin"/>
+      <xacro:ruka2_arm_joint joint_name="joint_1"/>
+      <xacro:ruka2_arm_joint joint_name="joint_2"/>
+      <xacro:ruka2_arm_joint joint_name="joint_3"/>
+      <xacro:ruka2_arm_joint joint_name="joint_4"/>
+      <xacro:ruka2_arm_joint joint_name="joint_5"/>
+      <xacro:ruka2_arm_joint joint_name="joint_6"/>
+      <xacro:if value="${use_mock_hardware_bool}">
+        <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__first_fin"/>
+        <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__second_fin"/>
+      </xacro:if>
     </ros2_control>
   </xacro:macro>
 </robot>

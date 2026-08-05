@@ -6,9 +6,27 @@
   <xacro:arg
     name="initial_positions_file"
     default="$(find ruka2_control)/config/initial_positions.yaml"/>
+  <xacro:arg name="use_mock_hardware" default="true"/>
+  <xacro:arg name="can_interface" default="vcan1.0"/>
+  <xacro:arg name="node_id" default="100"/>
+  <xacro:arg name="queue_length" default="1000"/>
+  <xacro:arg name="feedback_timeout" default="0.25"/>
+  <xacro:arg name="heartbeat_timeout" default="2.5"/>
+  <xacro:arg name="activation_timeout" default="5.0"/>
+  <xacro:arg name="startup_grace" default="1.0"/>
+  <xacro:arg name="require_all_joints_on_activate" default="true"/>
 
   <xacro:ruka2_model/>
-  <xacro:ruka2_mock_ros2_control
-    name="Ruka2MockSystem"
-    initial_positions_file="$(arg initial_positions_file)"/>
+  <xacro:ruka2_ros2_control
+    name="Ruka2System"
+    initial_positions_file="$(arg initial_positions_file)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    can_interface="$(arg can_interface)"
+    node_id="$(arg node_id)"
+    queue_length="$(arg queue_length)"
+    feedback_timeout="$(arg feedback_timeout)"
+    heartbeat_timeout="$(arg heartbeat_timeout)"
+    activation_timeout="$(arg activation_timeout)"
+    startup_grace="$(arg startup_grace)"
+    require_all_joints_on_activate="$(arg require_all_joints_on_activate)"/>
 </robot>
