@@ -584,12 +584,12 @@ hardware_interface::return_type Ruka2System::read(const rclcpp::Time &, const rc
   if (!runtime_ || !runtime_->interface || g_transport_error.load()) {
     return hardware_interface::return_type::ERROR;
   }
+  runtime_->interface->loop();
   const auto now_us = steady_microseconds();
   for (std::size_t index = 0; index < kJointCount; ++index) {
     joint_position_state_[index] = runtime_->position[index].load();
     joint_velocity_state_[index] = runtime_->velocity[index].load();
   }
-  runtime_->interface->loop();
   publish_diagnostics(now_us);
   if (active_ && now_us - runtime_->activation_time_us >=
     static_cast<std::uint64_t>(startup_grace_s_ * 1.0e6))
