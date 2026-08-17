@@ -1,5 +1,5 @@
 # Acceleration limits are inherited from the working SilverHand baseline until
-# RUKA2-specific mechanical limits are supplied. Firmware commit 95a7985 limits
+# RUKA2-specific mechanical limits are supplied. Firmware commit e2b37e18 limits
 # servo mode to 0.1 rad/s on every joint.
 default_velocity_scaling_factor: 1.0
 default_acceleration_scaling_factor: 0.1

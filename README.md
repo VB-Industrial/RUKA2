@@ -69,6 +69,18 @@ Mock control, MoveIt, and RViz:
 ros2 launch ruka2_moveit_config demo.launch.py
 ```
 
+MoveIt can also run against a controller manager on another ROS 2 host:
+
+```bash
+ros2 launch ruka2_moveit_config demo.launch.py \
+  start_control:=false use_mock_hardware:=false
+```
+
+For headless operation and split workstation deployments, the package also
+provides separate `move_group.launch.py` and `rviz.launch.py` entry points.
+The end effector remains deferred; the current arm planning chain ends at
+`link_06` while the finger geometry is retained in the model.
+
 The real hardware-interface implementation follows the current firmware
 communication contract.
 

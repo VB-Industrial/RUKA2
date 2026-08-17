@@ -1,7 +1,7 @@
 # RUKA2 Cyphal contract
 
 Status: validated against firmware commit
-`95a7985eb131c2e4f3cae9331b51f92c67321301`.
+`e2b37e1847cee153c5d4fee5bee5046bfdcfb399`.
 
 ## Nodes and subjects
 
@@ -58,3 +58,7 @@ Heartbeat health and its low eight firmware fault bits are published on the ROS
 README. Fault bits above bit 7 are available through firmware registers but do
 not fit into the heartbeat vendor status byte; a ROS register bridge is
 deferred.
+
+The legacy fusion-offset fault (bit 0) is disabled in this baseline. Fusion
+offset remains observable through the firmware `pos_get` register but cannot
+degrade heartbeat health or block motion while slip detection is being tuned.

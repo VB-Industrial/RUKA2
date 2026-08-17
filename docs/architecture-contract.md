@@ -68,7 +68,7 @@ repository. The ROS host uses the VB-Industrial `libcxxcanard` submodule at
 ## Communication baseline
 
 The current firmware is the source of truth. The validated baseline is commit
-`95a7985eb131c2e4f3cae9331b51f92c67321301`; the complete host contract is in
+`e2b37e1847cee153c5d4fee5bee5046bfdcfb399`; the complete host contract is in
 `interfaces/cyphal.md`.
 
 The Linux Cyphal transport is deliberately serviced synchronously from the
