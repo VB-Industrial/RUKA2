@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
   <xacro:include filename="$(find ruka2_description)/urdf/ruka2_macro.urdf.xacro"/>
-  <xacro:include filename="$(find ruka2_control)/ros2_control/ruka2.ros2_control.xacro"/>
+  <xacro:include filename="$(find ruka2_control)/config/ruka2.ros2_control.xacro"/>
 
   <xacro:arg
     name="initial_positions_file"
     default="$(find ruka2_control)/config/initial_positions.yaml"/>
   <xacro:arg name="use_mock_hardware" default="true"/>
+  <xacro:arg name="use_end_effector" default="true"/>
   <xacro:arg name="can_interface" default="vcan1.0"/>
   <xacro:arg name="node_id" default="100"/>
   <xacro:arg name="queue_length" default="1000"/>
@@ -16,7 +17,7 @@
   <xacro:arg name="startup_grace" default="1.0"/>
   <xacro:arg name="require_all_joints_on_activate" default="true"/>
 
-  <xacro:ruka2_model/>
+  <xacro:ruka2_model use_end_effector="$(arg use_end_effector)"/>
   <xacro:ruka2_ros2_control
     name="Ruka2System"
     initial_positions_file="$(arg initial_positions_file)"

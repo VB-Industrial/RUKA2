@@ -9,6 +9,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     use_joint_state_gui = LaunchConfiguration("use_joint_state_gui")
+    use_end_effector = LaunchConfiguration("use_end_effector")
     model = PathJoinSubstitution(
         [FindPackageShare("ruka2_description"), "urdf", "ruka2.urdf.xacro"]
     )
@@ -17,13 +18,27 @@ def generate_launch_description():
     )
     robot_description = {
         "robot_description": ParameterValue(
-            Command([FindExecutable(name="xacro"), " ", model]), value_type=str
+            Command(
+                [
+                    FindExecutable(name="xacro"),
+                    " ",
+                    model,
+                    " use_end_effector:=",
+                    use_end_effector,
+                ]
+            ),
+            value_type=str,
         )
     }
 
     return LaunchDescription(
         [
             DeclareLaunchArgument("use_joint_state_gui", default_value="true"),
+            DeclareLaunchArgument(
+                "use_end_effector",
+                default_value="true",
+                description="Include the gripper visual and collision geometry",
+            ),
             Node(
                 package="robot_state_publisher",
                 executable="robot_state_publisher",

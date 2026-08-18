@@ -16,14 +16,21 @@ Visualization Manager:
       Move Group Namespace: ""
       Name: MotionPlanning
       Planned Path:
-        Loop Animation: true
+        Loop Animation: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
+        State Display Time: 0.033 s
+        Trajectory Topic: display_planned_path
       Planning Request:
-        Planning Group: ruka2_arm
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 0.65
+        Goal State Color: 170; 170; 170
+        Planning Group: ruka_arm_controller
         Query Goal State: true
         Query Start State: false
+        Start State Alpha: 0.2
+        Start State Color: 140; 140; 140
       Planning Scene Topic: monitored_planning_scene
       Robot Description: robot_description
       Scene Robot:

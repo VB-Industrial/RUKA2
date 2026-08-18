@@ -9,16 +9,25 @@ PASSIVE_JOINTS = {
     "link_hand_cyl__first_fin",
     "link_hand_cyl__second_fin",
 }
+END_EFFECTOR_LINKS = {"link_hand_cyl", "first_fin", "second_fin"}
 
 
-def test_mock_hardware_exports_all_arm_joints():
+def render_control_description(*arguments):
     result = subprocess.run(
-        ["xacro", str(PACKAGE_ROOT / "urdf/ruka2_control.urdf.xacro")],
+        [
+            "xacro",
+            str(PACKAGE_ROOT / "config/ruka2_control.urdf.xacro"),
+            *arguments,
+        ],
         check=True,
         capture_output=True,
         text=True,
     )
-    robot = ET.fromstring(result.stdout)
+    return ET.fromstring(result.stdout)
+
+
+def test_mock_hardware_exports_all_arm_joints():
+    robot = render_control_description()
     control = robot.find("ros2_control")
     assert control is not None
     assert control.findtext("hardware/plugin") == "mock_components/GenericSystem"
@@ -36,19 +45,30 @@ def test_mock_hardware_exports_all_arm_joints():
 
 
 def test_real_hardware_exports_only_six_arm_joints():
-    result = subprocess.run(
-        [
-            "xacro",
-            str(PACKAGE_ROOT / "urdf/ruka2_control.urdf.xacro"),
-            "use_mock_hardware:=false",
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    robot = ET.fromstring(result.stdout)
+    robot = render_control_description("use_mock_hardware:=false")
     control = robot.find("ros2_control")
     assert control is not None
     assert control.findtext("hardware/plugin") == "ruka2_control/Ruka2System"
     assert control.findtext("hardware/param[@name='can_interface']") == "vcan1.0"
     assert {joint.attrib["name"] for joint in control.findall("joint")} == ARM_JOINTS
+
+
+def test_end_effector_geometry_is_optional_without_changing_the_contract():
+    with_end_effector = render_control_description()
+    without_end_effector = render_control_description("use_end_effector:=false")
+
+    for link_name in END_EFFECTOR_LINKS:
+        visible_link = with_end_effector.find(f"./link[@name='{link_name}']")
+        hidden_link = without_end_effector.find(f"./link[@name='{link_name}']")
+        assert visible_link is not None
+        assert visible_link.find("visual") is not None
+        assert visible_link.find("collision") is not None
+        assert hidden_link is not None
+        assert hidden_link.find("visual") is None
+        assert hidden_link.find("collision") is None
+
+    for robot in (with_end_effector, without_end_effector):
+        control = robot.find("ros2_control")
+        assert {joint.attrib["name"] for joint in control.findall("joint")} == (
+            ARM_JOINTS | PASSIVE_JOINTS
+        )

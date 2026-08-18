@@ -1,37 +1,37 @@
-# Acceleration limits are inherited from the working SilverHand baseline until
-# RUKA2-specific mechanical limits are supplied. Firmware commit e2b37e18 limits
-# servo mode to 0.1 rad/s on every joint.
+# Planning velocity limits are 16/9 of the initial conservative values. With an
+# RViz scaling factor of 0.1 this gives about 0.0178 rad/s. Real commands remain
+# capped at 0.1 rad/s by the unchanged hardware interface.
 default_velocity_scaling_factor: 1.0
 default_acceleration_scaling_factor: 0.1
 
 joint_limits:
   joint_1:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 1.333333
   joint_2:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 1.333333
   joint_3:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 1.333333
   joint_4:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 1.333333
   joint_5:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 1.333333
   joint_6:
     has_velocity_limits: true
-    max_velocity: 0.1
+    max_velocity: 0.177778
     has_acceleration_limits: true
-    max_acceleration: 2.0
+    max_acceleration: 2.666667

@@ -4,7 +4,7 @@ project(ruka2_moveit_config)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch rviz
+  DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME}
   PATTERN "__pycache__" EXCLUDE
   PATTERN "*.pyc" EXCLUDE

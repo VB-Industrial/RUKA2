@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
   <xacro:include filename="$(find ruka2_description)/urdf/ruka2_macro.urdf.xacro"/>
-  <xacro:ruka2_model/>
+  <xacro:arg name="use_end_effector" default="true"/>
+  <xacro:ruka2_model use_end_effector="$(arg use_end_effector)"/>
 </robot>
