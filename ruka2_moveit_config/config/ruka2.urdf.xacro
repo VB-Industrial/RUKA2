@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
+  <!-- Keep MoveIt configuration self-contained while the canonical model stays
+       in ruka2_description and ros2_control stays in ruka2_control. -->
+  <xacro:include filename="$(find ruka2_control)/config/ruka2_control.urdf.xacro"/>
+</robot>

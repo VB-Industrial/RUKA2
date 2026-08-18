@@ -1,88 +1,85 @@
 # RUKA2
 
-RUKA2 is the ROS 2 and embedded software monorepository for the second-generation
+ROS 2 Jazzy workspace and embedded software for the second-generation
 VB-Industrial manipulator.
 
-Target platform:
+## ROS packages
 
-- Ubuntu 24.04
-- ROS 2 Jazzy
-- Raspberry Pi, with Ethernet-CAN exposed to ROS as SocketCAN `vcan` interfaces
-- STM32G474 joint firmware using Cyphal over CAN FD
+- `ruka2_description` — the canonical URDF/Xacro, meshes, and a standalone
+  model viewer;
+- `ruka2_control` — the existing Cyphal `ros2_control` hardware plugin, the
+  mock profile, controllers, and robot bringup;
+- `ruka2_moveit_config` — SRDF, planning configuration, MoveIt, and RViz.
 
-## Repository layout
+The arm is planned and controlled through `ruka_arm_controller`, matching the
+public name used by the original `ruka_end_eff` package. The current hardware
+contract exposes six arm joints. Gripper geometry remains visible, but its
+joints are passive until lower-level gripper control is implemented.
 
-- `ruka2_description` — canonical robot description, meshes, and RViz viewer
-- `ruka2_control` — `ros2_control` hardware interface and controller bringup
-- `ruka2_moveit_config` — MoveIt configuration and visualization
-- `firmware/ruka2_firmware` — standalone firmware Git submodule
-- `third_party/libcxxcanard` — VB-Industrial `libcxxcanard` Git submodule for the ROS host
-- `interfaces` — documented firmware/host communication contract
-- `deploy/raspberry_pi` — Raspberry Pi provisioning and runtime assets
-
-The firmware subtree is intentionally excluded from `colcon` discovery by
-`firmware/COLCON_IGNORE`. It is built using its own CMake presets.
-
-## Clone
-
-```bash
-git clone --recurse-submodules https://github.com/VB-Industrial/RUKA2.git
-cd RUKA2
-```
-
-For an existing clone:
+## Build
 
 ```bash
 git submodule update --init --recursive
-```
-
-## ROS build
-
-```bash
 source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths . --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
-colcon test
-colcon test-result --verbose
 ```
 
-The repository includes the canonical RUKA2 geometry baseline and a working
-six-axis mock control/MoveIt path. Gripper geometry is retained for later work,
-but only the arm is currently planned and controlled.
+The firmware subtree contains `COLCON_IGNORE` and is built separately with its
+own CMake presets.
 
-Model viewer:
+## Launch
+
+Display only:
 
 ```bash
 ros2 launch ruka2_description display.launch.py
 ```
 
-Mock `ros2_control`:
+Robot state publisher and `ros2_control`, using safe mock hardware by default:
 
 ```bash
-ros2 launch ruka2_control mock.launch.py
+ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-Mock control, MoveIt, and RViz:
+Complete mock environment (control, MoveIt, and RViz):
 
 ```bash
-ros2 launch ruka2_moveit_config demo.launch.py
+ros2 launch ruka2_moveit_config full_system.launch.py
 ```
 
-MoveIt can also run against a controller manager on another ROS 2 host:
+Start the same system without gripper visual and collision geometry:
 
 ```bash
-ros2 launch ruka2_moveit_config demo.launch.py \
-  start_control:=false use_mock_hardware:=false
+ros2 launch ruka2_moveit_config full_system.launch.py use_end_effector:=false
 ```
 
-For headless operation and split workstation deployments, the package also
-provides separate `move_group.launch.py` and `rviz.launch.py` entry points.
-The end effector remains deferred; the current arm planning chain ends at
-`link_06` while the finger geometry is retained in the model.
+Real arm:
 
-The real hardware-interface implementation follows the current firmware
-communication contract.
+```bash
+ros2 launch ruka2_moveit_config full_system.launch.py \
+  use_mock_hardware:=false can_interface:=vcan1.0
+```
 
-See [the architecture contract](docs/architecture-contract.md) for current
-decisions and deferred inputs.
+MoveIt and RViz against an already running `ruka2_control` instance:
+
+```bash
+ros2 launch ruka2_moveit_config moveit.launch.py \
+  use_mock_hardware:=false
+```
+
+Set `use_rviz:=false` on either MoveIt launch for headless operation.
+
+## Validation
+
+```bash
+colcon test --event-handlers console_direct+
+colcon test-result --verbose
+```
+
+The real hardware interface keeps the established synchronous Cyphal/SocketCAN
+path and defaults to `vcan1.0`. See
+[`docs/architecture-contract.md`](docs/architecture-contract.md) and
+[`interfaces/cyphal.md`](interfaces/cyphal.md) for the frozen lower-level
+contract.

@@ -1,14 +1,15 @@
 controller_manager:
   ros__parameters:
+    # ros2_control read/update/write loop.
     update_rate: 100
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    arm_controller:
+    ruka_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-arm_controller:
+ruka_arm_controller:
   ros__parameters:
     joints:
       - joint_1
@@ -23,5 +24,7 @@ arm_controller:
     state_interfaces:
       - position
       - velocity
+    action_monitor_rate: 100.0
+    interpolation_method: splines
     allow_partial_joints_goal: false
     allow_nonzero_velocity_at_trajectory_end: false

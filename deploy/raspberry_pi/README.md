@@ -26,9 +26,6 @@ The target host has been audited and validated with this configuration. Import
 of its generic provisioning scripts and systemd units remains separate from
 the board-specific JSON tracked here.
 
-The initial machine handoff prompt is stored in
-[`docs/raspberry-pi-handoff-prompt.md`](../../docs/raspberry-pi-handoff-prompt.md).
-
 Upstream documentation:
 
 - https://github.com/VBCores/ethernet-can

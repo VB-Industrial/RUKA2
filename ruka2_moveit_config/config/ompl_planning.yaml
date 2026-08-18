@@ -20,7 +20,7 @@ planner_configs:
     range: 0.0
     goal_bias: 0.05
 
-ruka2_arm:
+ruka_arm_controller:
   planner_configs:
     - RRTConnect
     - RRTstar

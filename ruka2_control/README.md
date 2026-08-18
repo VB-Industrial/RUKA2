@@ -1,21 +1,24 @@
 # ruka2_control
 
-RUKA2 `ros2_control` hardware plugin, controller configuration, mock/real
-profiles, diagnostics, and bringup.
+The existing RUKA2 Cyphal hardware interface plus the `ros2_control` robot
+description, controller configuration, and bringup.
 
-The package provides separate six-axis mock and real profiles around the
-canonical geometry in `ruka2_description`:
+Mock hardware is the safe default:
 
 ```bash
-ros2 launch ruka2_control mock.launch.py
-ros2 launch ruka2_control real.launch.py can_interface:=vcan1.0
+ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-The real profile loads `ruka2_control/Ruka2System`. It communicates as Cyphal
-node 100 with firmware nodes 21 through 26. Activation fails unless all six
-nodes provide fresh heartbeat and feedback. Communication and firmware health
-are published on `/diagnostics`.
+Use `use_end_effector:=false` to publish the arm without gripper visual and
+collision geometry. The controller and hardware joint contract do not change.
 
-The transport is single-threaded and serviced from the `ros2_control` update
-cycle. The default is `vcan1.0`, supplied by the Ethernet-CAN host service on
-the Raspberry Pi.
+Use the real hardware plugin without changing the launch topology:
+
+```bash
+ros2 launch ruka2_control ros2_control.launch.py \
+  use_mock_hardware:=false can_interface:=vcan1.0
+```
+
+Both profiles expose the six arm joints through `ruka_arm_controller`. The
+real profile still uses `ruka2_control/Ruka2System` and the unchanged
+synchronous Cyphal transport.
