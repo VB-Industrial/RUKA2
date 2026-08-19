@@ -40,6 +40,8 @@ def test_mock_hardware_exports_all_arm_joints():
         ]
         if joint.attrib["name"] in ARM_JOINTS:
             assert command_interfaces == ["position", "velocity"]
+        elif joint.attrib["name"] == "link_hand_cyl__first_fin":
+            assert command_interfaces == ["position"]
         else:
             assert command_interfaces == []
 
@@ -54,11 +56,14 @@ def test_real_hardware_exports_only_six_arm_joints():
 
 
 def test_end_effector_geometry_is_optional_without_changing_the_contract():
-    with_end_effector = render_control_description()
-    without_end_effector = render_control_description("use_end_effector:=false")
+    mechanical = render_control_description()
+    electromagnetic = render_control_description(
+        "end_effector_type:=electromagnetic"
+    )
+    without_end_effector = render_control_description("end_effector_type:=none")
 
     for link_name in END_EFFECTOR_LINKS:
-        visible_link = with_end_effector.find(f"./link[@name='{link_name}']")
+        visible_link = mechanical.find(f"./link[@name='{link_name}']")
         hidden_link = without_end_effector.find(f"./link[@name='{link_name}']")
         assert visible_link is not None
         assert visible_link.find("visual") is not None
@@ -67,8 +72,16 @@ def test_end_effector_geometry_is_optional_without_changing_the_contract():
         assert hidden_link.find("visual") is None
         assert hidden_link.find("collision") is None
 
-    for robot in (with_end_effector, without_end_effector):
+    assert electromagnetic.find("./link[@name='link_hand_cyl']/visual") is not None
+    assert electromagnetic.find("./link[@name='tool0']") is not None
+
+    for robot in (mechanical, electromagnetic, without_end_effector):
         control = robot.find("ros2_control")
         assert {joint.attrib["name"] for joint in control.findall("joint")} == (
             ARM_JOINTS | PASSIVE_JOINTS
         )
+
+    for robot in (electromagnetic, without_end_effector):
+        for joint_name in PASSIVE_JOINTS:
+            joint = robot.find(f"./ros2_control/joint[@name='{joint_name}']")
+            assert joint.findall("command_interface") == []

@@ -1,22 +1,23 @@
 # RUKA2
 
-ROS 2 Jazzy workspace and embedded software for the second-generation
-VB-Industrial manipulator.
+Рабочее пространство ROS 2 Jazzy и встроенное ПО для манипулятора
+VB-Industrial второго поколения.
 
-## ROS packages
+## Пакеты ROS
 
-- `ruka2_description` — the canonical URDF/Xacro, meshes, and a standalone
-  model viewer;
-- `ruka2_control` — the existing Cyphal `ros2_control` hardware plugin, the
-  mock profile, controllers, and robot bringup;
-- `ruka2_moveit_config` — SRDF, planning configuration, MoveIt, and RViz.
+- `ruka2_description` — основная модель URDF/Xacro, меши и отдельный запуск
+  для просмотра модели;
+- `ruka2_control` — существующий аппаратный плагин Cyphal для `ros2_control`,
+  mock-профиль, контроллеры и запуск робота;
+- `ruka2_moveit_config` — SRDF, настройки планирования, MoveIt и RViz.
 
-The arm is planned and controlled through `ruka_arm_controller`, matching the
-public name used by the original `ruka_end_eff` package. The current hardware
-contract exposes six arm joints. Gripper geometry remains visible, but its
-joints are passive until lower-level gripper control is implemented.
+Планирование и управление рукой выполняются через `ruka_arm_controller`.
+Текущий аппаратный контракт предоставляет шесть суставов руки. Геометрия
+захвата отображается и учитывается при проверке коллизий, но управление
+захватом на реальном оборудовании будет добавлено после реализации нижнего
+уровня. В mock-профиле механическим захватом можно управлять для проверки.
 
-## Build
+## Сборка
 
 ```bash
 git submodule update --init --recursive
@@ -26,60 +27,83 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-The firmware subtree contains `COLCON_IGNORE` and is built separately with its
-own CMake presets.
+В дереве прошивки находится `COLCON_IGNORE`, поэтому прошивка не входит в
+сборку colcon и собирается отдельно своими пресетами CMake.
 
-## Launch
+## Запуск
 
-Display only:
+Только просмотр модели:
 
 ```bash
 ros2 launch ruka2_description display.launch.py
 ```
 
-Robot state publisher and `ros2_control`, using safe mock hardware by default:
+Публикация состояния робота и `ros2_control`. По умолчанию используется
+безопасное mock-оборудование:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-Complete mock environment (control, MoveIt, and RViz):
+Полное mock-окружение: управление, MoveIt и RViz:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py
 ```
 
-Start the same system without gripper visual and collision geometry:
+По умолчанию выбран механический захват. Чтобы использовать электромагнитный
+захват, укажите его явно:
 
 ```bash
-ros2 launch ruka2_moveit_config full_system.launch.py use_end_effector:=false
+ros2 launch ruka2_moveit_config full_system.launch.py \
+  end_effector_type:=electromagnetic
 ```
 
-Real arm:
+Запуск без визуальной и коллизионной геометрии захвата:
+
+```bash
+ros2 launch ruka2_moveit_config full_system.launch.py end_effector_type:=none
+```
+
+Для обратной совместимости также поддерживается аргумент
+`use_end_effector:=false`.
+
+Цепочка планирования MoveIt заканчивается в общей системе координат `tool0`.
+Для электромагнитного захвата она расположена на внешней плоскости наклонного
+цилиндра, для механического — посередине между концами пальцев. Второй палец
+механического захвата повторяет первый и не может перемещаться независимо.
+
+При `end_effector_type:=mechanical` в RViz также доступна группа планирования
+`mechanical_gripper`. Выберите её в панели MotionPlanning и задайте единственную
+координату раскрытия либо используйте именованные состояния `open` и `closed`.
+В mock-профиле движение выполняет `mechanical_gripper_controller`; для профиля
+реального оборудования этот контроллер намеренно не запускается.
+
+Реальная рука:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
   use_mock_hardware:=false can_interface:=vcan1.0
 ```
 
-MoveIt and RViz against an already running `ruka2_control` instance:
+MoveIt и RViz при уже запущенном экземпляре `ruka2_control`:
 
 ```bash
 ros2 launch ruka2_moveit_config moveit.launch.py \
   use_mock_hardware:=false
 ```
 
-Set `use_rviz:=false` on either MoveIt launch for headless operation.
+Для запуска MoveIt без графического интерфейса укажите `use_rviz:=false`.
 
-## Validation
+## Проверка
 
 ```bash
 colcon test --event-handlers console_direct+
 colcon test-result --verbose
 ```
 
-The real hardware interface keeps the established synchronous Cyphal/SocketCAN
-path and defaults to `vcan1.0`. See
-[`docs/architecture-contract.md`](docs/architecture-contract.md) and
-[`interfaces/cyphal.md`](interfaces/cyphal.md) for the frozen lower-level
-contract.
+Интерфейс реального оборудования сохраняет существующий синхронный тракт
+Cyphal/SocketCAN и по умолчанию использует `vcan1.0`. Зафиксированный контракт
+нижнего уровня описан в
+[`docs/architecture-contract.md`](docs/architecture-contract.md) и
+[`interfaces/cyphal.md`](interfaces/cyphal.md).

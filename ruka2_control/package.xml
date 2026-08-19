@@ -3,7 +3,7 @@
 <package format="3">
   <name>ruka2_control</name>
   <version>0.1.0</version>
-  <description>ros2_control hardware interface and controller bringup for RUKA2.</description>
+  <description>Аппаратный интерфейс ros2_control и запуск контроллеров RUKA2.</description>
 
   <maintainer email="info@vb-industrial.ru">VB-Industrial</maintainer>
   <license>Proprietary</license>

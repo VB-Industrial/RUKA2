@@ -3,6 +3,6 @@
     name="ruka2_control/Ruka2System"
     type="ruka2_control::Ruka2System"
     base_class_type="hardware_interface::SystemInterface">
-    <description>Cyphal/CAN FD ros2_control system interface for the six-axis RUKA2 arm.</description>
+    <description>Системный интерфейс Cyphal/CAN FD для управления шестиосевой рукой RUKA2 через ros2_control.</description>
   </class>
 </library>

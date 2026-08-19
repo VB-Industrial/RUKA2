@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot name="ruka2">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
+  <xacro:arg name="end_effector_type" default="mechanical"/>
+  <xacro:property
+    name="selected_end_effector"
+    value="$(arg end_effector_type)"/>
+
   <group name="ruka_arm_controller">
-    <chain base_link="base_link" tip_link="link_06"/>
+    <chain base_link="base_link" tip_link="tool0"/>
   </group>
+
+  <xacro:if value="${selected_end_effector == 'mechanical'}">
+    <!-- Одна независимая координата раскрытия; второй палец связан через mimic в URDF. -->
+    <group name="mechanical_gripper">
+      <joint name="link_hand_cyl__first_fin"/>
+    </group>
+
+    <group_state name="closed" group="mechanical_gripper">
+      <joint name="link_hand_cyl__first_fin" value="0.0"/>
+    </group_state>
+    <group_state name="open" group="mechanical_gripper">
+      <joint name="link_hand_cyl__first_fin" value="0.01"/>
+    </group_state>
+
+    <end_effector
+      name="mechanical_gripper"
+      parent_link="link_06"
+      group="mechanical_gripper"
+      parent_group="ruka_arm_controller"/>
+  </xacro:if>
 
   <group_state name="start" group="ruka_arm_controller">
     <joint name="joint_1" value="0.0"/>
@@ -33,9 +58,11 @@
 
   <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="base_link"/>
 
-  <!-- Gripper geometry is retained, but its hardware integration is deferred. -->
-  <passive_joint name="link_hand_cyl__first_fin"/>
+  <!-- Палец mimic никогда не является независимой переменной планирования. -->
   <passive_joint name="link_hand_cyl__second_fin"/>
+  <xacro:unless value="${selected_end_effector == 'mechanical'}">
+    <passive_joint name="link_hand_cyl__first_fin"/>
+  </xacro:unless>
 
   <disable_collisions link1="base_link" link2="link_01" reason="Adjacent"/>
   <disable_collisions link1="base_link" link2="link_01_red" reason="Never"/>

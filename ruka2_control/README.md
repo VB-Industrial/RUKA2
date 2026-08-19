@@ -1,24 +1,27 @@
 # ruka2_control
 
-The existing RUKA2 Cyphal hardware interface plus the `ros2_control` robot
-description, controller configuration, and bringup.
+Существующий аппаратный интерфейс Cyphal для RUKA2, описание робота для
+`ros2_control`, конфигурация контроллеров и запуск системы управления.
 
-Mock hardware is the safe default:
+По умолчанию используется безопасное mock-оборудование:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-Use `use_end_effector:=false` to publish the arm without gripper visual and
-collision geometry. The controller and hardware joint contract do not change.
+Значение `end_effector_type` можно установить в `mechanical`, `electromagnetic`
+или `none`. По умолчанию выбран механический захват; аргумент
+`use_end_effector:=false` сохранён для совместимости. В механическом
+mock-профиле `mechanical_gripper_controller` управляет ведущим пальцем, а второй
+палец следует за ним через отношение mimic в URDF.
 
-Use the real hardware plugin without changing the launch topology:
+Запуск с плагином реального оборудования без изменения структуры запуска:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py \
   use_mock_hardware:=false can_interface:=vcan1.0
 ```
 
-Both profiles expose the six arm joints through `ruka_arm_controller`. The
-real profile still uses `ruka2_control/Ruka2System` and the unchanged
-synchronous Cyphal transport.
+Оба профиля предоставляют шесть суставов руки через `ruka_arm_controller`.
+Реальный профиль использует `ruka2_control/Ruka2System` и неизменённый
+синхронный транспорт Cyphal. Mock-контроллер захвата в нём не запускается.

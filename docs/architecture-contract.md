@@ -1,96 +1,91 @@
-# RUKA2 architecture contract
+# Архитектурный контракт RUKA2
 
-Status: active baseline for implementation and hardware integration.
+Статус: действующая базовая конфигурация для разработки и интеграции с
+оборудованием.
 
-## Product packages
+## Пакеты продукта
 
 - `ruka2_control`
-- `ruka2_firmware` as an external Git submodule
+- `ruka2_firmware`
 - `ruka2_description`
 - `ruka2_moveit_config`
 
-ROS package names are lowercase. The product and repository name is RUKA2.
+Имена пакетов ROS записываются строчными буквами. Имя проекта — RUKA2.
 
-## Supported platform
+## Поддерживаемая платформа
 
 - Ubuntu 24.04
 - ROS 2 Jazzy
-- Raspberry Pi supports two runtime roles:
-  - `server`: Ethernet-CAN bridge, `ros2_control`, controller manager, robot
-    state publisher, and diagnostics;
-  - `workstation`: everything in `server`, plus MoveIt, RViz, and local
-    visualization.
+- Raspberry Pi поддерживает две роли:
+  - `server`: мост Ethernet-CAN, `ros2_control`, controller manager, публикация
+    состояния робота и диагностика;
+  - `workstation`: всё из роли `server`, а также MoveIt, RViz и локальная
+    визуализация.
 
-The Raspberry Pi host runs Ubuntu 24.04 Desktop on ARM64 while retaining remote
-administration and both runtime roles.
+Raspberry Pi работает под управлением Ubuntu 24.04 Desktop на ARM64, сохраняет
+возможность удалённого администрирования и поддерживает обе роли.
 
-## Robot description
+## Описание робота
 
-The canonical geometry baseline was delivered as `ruka.urdf` and imported into
-`ruka2_description`. The delivered source SHA-256 is
-`636ee55728b1e7bbe03136b55f579f75608bd8ef5503bfefcdde3c6f466c56f9`.
-It is authoritative for:
+Основная геометрическая модель находится в `ruka2_description` и определяет:
 
-- joint names and types;
-- joint axes and directions;
-- zero positions and position limits;
-- visual and collision geometry;
-- the robot base frame;
-- arm joint position and velocity limits.
+- имена и типы шарниров;
+- оси и направления шарниров;
+- нулевые положения и ограничения перемещения;
+- визуальная геометрия и ограничения;
+- базовая система координат робота;
+- ограничения положения и скорости шарниров манипулятора.
 
-The six arm joints are normalized to `joint_1` through `joint_6`. The
-kinematic chain runs from `base_link` through `link_06`. Gripper and finger
-geometry remains present in the description, while gripper control and MoveIt
-integration are deferred. Arm-link inertials and a dedicated tool/TCP frame
-are also still pending.
+Шесть шарниров манипулятора приведены к именам от `joint_1` до `joint_6`. Кинематическая
+цепочка начинается в `base_link` и заканчивается общей системой координат захвата
+`tool0`. Положение `tool0` зависит от выбранного `end_effector_type`: для
+механического захвата она находится в точке крепление захвата, для
+электромагнитного — на рабочем торце цилиндра, а без захвата совпадает с
+`link_06`. Геометрия выбранного захвата входит в модель и учитывается при
+проверке столкновений.
 
-`base frame` means the coordinate frame fixed to the robot mounting base and
-used as the root for kinematics. `tool frame` means the reference frame at the
-working end of the manipulator, normally the flange or tool centre point used
-by MoveIt when planning an end-effector pose. Until a dedicated flange/TCP is
-defined, MoveIt uses `link_06` as the arm tip.
+В mock-профиле механический захват доступен в MoveIt как группа
+`mechanical_gripper`. У неё одна независимая координата раскрытия; второй палец
+связан с первым отношением mimic.
 
-## Firmware
+Под `base frame` понимается система координат, закреплённая на основании робота
+и используемая как корень кинематической модели. Под `tool frame` понимается
+система координат на рабочем конце манипулятора — обычно на фланце или в точке
+TCP, по которой MoveIt планирует положение захвата. В RUKA2 роль общей рабочей
+системы координат выполняет `tool0`.
 
-Firmware source remains in the upstream repository and is consumed here as the
-`firmware/ruka2_firmware` Git submodule. Functional fixes must be committed to
-that upstream repository and then adopted here by updating the pinned submodule
-revision.
+## Прошивка
 
-Joint selection remains manual through `SR_JOINT_INDEX`. The operator selects
-the connected joint, rebuilds, flashes, and then proceeds to the next driver.
-No six-image build matrix is required.
+Компонент прошивки находится в `firmware/ruka2_firmware` и собирается отдельно
+от рабочего пространства ROS.
 
-The firmware's own embedded dependencies remain controlled by its upstream
-repository. The ROS host uses the VB-Industrial `libcxxcanard` submodule at
+Выбор сустава выполняется вручную через `SR_JOINT_INDEX`. Оператор выбирает
+подключённый сустав, повторно собирает и прошивает драйвер, после чего переходит
+к следующему. Матрица сборки из шести образов не требуется.
+
+Встроенные зависимости прошивки находятся внутри компонента прошивки. Хост ROS
+использует библиотеку `libcxxcanard`, расположенную в
 `third_party/libcxxcanard`.
 
-## Communication baseline
+## Базовая схема связи
 
-The current firmware is the source of truth. The validated baseline is commit
-`e2b37e1847cee153c5d4fee5bee5046bfdcfb399`; the complete host contract is in
+Действующие параметры связи определяются прошивкой и контрактом хоста в
 `interfaces/cyphal.md`.
 
-The Linux Cyphal transport is deliberately serviced synchronously from the
-`ros2_control` update path. No background RX/TX threads are used. This retains
-the proven SilverHand execution model and keeps commissioning deterministic.
+Транспорт Cyphal в Linux обслуживается синхронно из цикла обновления
+`ros2_control`. Фоновые потоки RX/TX не используются, благодаря чему выполнение
+остаётся детерминированным, а ввод в эксплуатацию — предсказуемым.
 
-The Raspberry Pi has no physical SocketCAN adapter. The separate Ethernet-CAN
-device transports CAN FD over UDP and the Linux host service exposes board
-buses as `vcan1.x` SocketCAN interfaces. Board `ruka1.local` uses the following
-mapping on the target Raspberry Pi (`192.168.30.146`):
+У Raspberry Pi нет физического адаптера SocketCAN. Отдельное устройство
+Ethernet-CAN передаёт CAN FD поверх UDP, а служба на Linux предоставляет шины
+платы как интерфейсы SocketCAN `vcan1.x`. Для платы `ruka1.local` на целевой
+Raspberry Pi (`192.168.30.146`) используется следующее распределение:
 
-- bus 0 / `vcan1.0`: arm;
-- bus 1 / `vcan1.1`: gripper;
-- bus 2 / `vcan1.2`: reserved powerboard transport (no application yet).
+- шина 0 / `vcan1.0`: рука;
+- шина 1 / `vcan1.1`: захват;
+- шина 2 / `vcan1.2`: резерв для платы питания, прикладная часть пока не
+  реализована.
 
-All three buses use CAN FD with BRS at 1 Mbit/s nominal and 8 Mbit/s data. The
-Ethernet-CAN integration period is 10 ms. Board buses 3 through 5 are disabled.
-
-## Deferred work
-
-- arm-link inertial properties;
-- dedicated flange/tool/TCP frames;
-- gripper hardware and MoveIt integration;
-- final self-collision matrix validation;
-- final ROS DDS network parameters.
+Все три шины используют CAN FD с BRS: номинальная скорость 1 Мбит/с, скорость
+передачи данных 8 Мбит/с. Период интеграции Ethernet-CAN равен 10 мс. Шины
+платы с 3 по 5 отключены.

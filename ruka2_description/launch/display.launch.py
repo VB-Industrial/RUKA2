@@ -10,6 +10,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     use_joint_state_gui = LaunchConfiguration("use_joint_state_gui")
     use_end_effector = LaunchConfiguration("use_end_effector")
+    end_effector_type = LaunchConfiguration("end_effector_type")
     model = PathJoinSubstitution(
         [FindPackageShare("ruka2_description"), "urdf", "ruka2.urdf.xacro"]
     )
@@ -25,6 +26,8 @@ def generate_launch_description():
                     model,
                     " use_end_effector:=",
                     use_end_effector,
+                    " end_effector_type:=",
+                    end_effector_type,
                 ]
             ),
             value_type=str,
@@ -37,7 +40,13 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "use_end_effector",
                 default_value="true",
-                description="Include the gripper visual and collision geometry",
+                description="Добавить визуальную и коллизионную геометрию захвата",
+            ),
+            DeclareLaunchArgument(
+                "end_effector_type",
+                default_value="mechanical",
+                choices=["mechanical", "electromagnetic", "none"],
+                description="Выбрать тип установленного захвата",
             ),
             Node(
                 package="robot_state_publisher",

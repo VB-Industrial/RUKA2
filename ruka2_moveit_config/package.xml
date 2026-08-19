@@ -3,7 +3,7 @@
 <package format="3">
   <name>ruka2_moveit_config</name>
   <version>0.1.0</version>
-  <description>MoveIt planning, execution, and visualization configuration for RUKA2.</description>
+  <description>Настройки планирования, выполнения и визуализации MoveIt для RUKA2.</description>
 
   <maintainer email="info@vb-industrial.ru">VB-Industrial</maintainer>
   <license>Proprietary</license>

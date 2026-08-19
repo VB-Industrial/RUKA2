@@ -1,64 +1,67 @@
-# RUKA2 Cyphal contract
+# Контракт Cyphal для RUKA2
 
-Status: validated against firmware commit
-`e2b37e1847cee153c5d4fee5bee5046bfdcfb399`.
+Статус: действующий проверенный контракт.
 
-## Nodes and subjects
+## Узлы и subjects
 
-| Direction | Joint/node mapping | Subject | Type | Purpose |
+| Направление | Соответствие суставов и узлов | Subject | Тип | Назначение |
 | --- | --- | --- | --- | --- |
-| Controller to joints | controller `100`, joints `21..26` | `1121..1126` | `reg.udral.physics.kinematics.rotation.Planar.0.1` | Servo position, velocity, acceleration |
-| Controller to joints | controller `100`, joints `21..26` | `1131..1136` | `uavcan.si.unit.angular_velocity.Scalar.1.0` | Direct joint velocity in rad/s |
-| Joints to controller | source nodes `21..26` | `1001` | `reg.udral.physics.kinematics.rotation.Planar.0.1` | Shared position and velocity feedback |
-| All nodes | standard heartbeat | `7509` | `uavcan.node.Heartbeat.1.0` | Liveness and health |
+| От контроллера к суставам | контроллер `100`, суставы `21..26` | `1121..1126` | `reg.udral.physics.kinematics.rotation.Planar.0.1` | Положение, скорость и ускорение сервопривода |
+| От контроллера к суставам | контроллер `100`, суставы `21..26` | `1131..1136` | `uavcan.si.unit.angular_velocity.Scalar.1.0` | Прямая команда скорости сустава в рад/с |
+| От суставов к контроллеру | узлы-источники `21..26` | `1001` | `reg.udral.physics.kinematics.rotation.Planar.0.1` | Общая обратная связь по положению и скорости |
+| Все узлы | стандартный heartbeat | `7509` | `uavcan.node.Heartbeat.1.0` | Контроль доступности и состояния |
 
-Feedback on subject `1001` is associated with a joint using the Cyphal source
-node-ID. The real hardware interface must reject unexpected source nodes and
-stale feedback.
+Обратная связь по subject `1001` сопоставляется с суставом по node-ID источника
+Cyphal. Интерфейс реального оборудования должен отклонять сообщения от
+неожиданных узлов и устаревшую обратную связь.
 
-## Timing and command rules
+## Временные параметры и правила команд
 
-- Joint feedback is published at 20 Hz.
-- Joint heartbeat is published at 1 Hz.
-- The controller publishes heartbeat at 1 Hz. Firmware accepts remote motion
-  only from controller node `100` and stops it after 2.5 seconds without that
-  heartbeat.
-- Servo command timeout is 1 second. Repeating the same position changes the
-  firmware from feed-forward tracking to its settling/hold logic.
-- Maximum servo velocity is `0.1 rad/s` for every joint. The host sends the
-  absolute velocity magnitude; firmware selects direction from position error.
-- The host sends acceleration as zero, selecting the tested default firmware
-  motion profile.
-- Each command subject and the heartbeat subject own an independent transfer-ID
-  sequence.
+- Обратная связь от сустава публикуется с частотой 20 Гц.
+- Heartbeat сустава публикуется с частотой 1 Гц.
+- Контроллер публикует heartbeat с частотой 1 Гц. Прошивка принимает удалённые
+  команды движения только от узла-контроллера `100` и останавливает движение,
+  если heartbeat от него отсутствует 2,5 секунды.
+- Тайм-аут команды сервопривода равен 1 секунде. Повтор одного и того же
+  положения переводит прошивку из упреждающего слежения в режим доведения и
+  удержания.
+- Максимальная скорость каждого сервопривода — `0.1 rad/s`. Хост передаёт
+  абсолютное значение скорости, а прошивка выбирает направление по ошибке
+  положения.
+- Хост передаёт нулевое ускорение, выбирая проверенный стандартный профиль
+  движения прошивки.
+- Каждый командный subject и subject heartbeat используют независимую
+  последовательность transfer-ID.
 
-The real hardware defaults are feedback timeout `0.25 s`, heartbeat timeout
-`2.5 s`, activation timeout `5 s`, and CAN interface `vcan1.0`. Activation
-requires fresh feedback and heartbeat from all six nodes.
+Для реального оборудования по умолчанию используются: тайм-аут обратной связи
+`0.25 s`, тайм-аут heartbeat `2.5 s`, тайм-аут активации `5 s` и CAN-интерфейс
+`vcan1.0`. Для активации необходимы актуальная обратная связь и heartbeat от
+всех шести узлов.
 
-## Joint mapping
+## Соответствие суставов
 
-| ROS joint | Node | Servo subject | Direct subject | Firmware direction | Encoder inverted |
+| Сустав ROS | Узел | Subject сервопривода | Прямой subject | Направление в прошивке | Инверсия энкодера |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `joint_1` | 21 | 1121 | 1131 | +1 | yes |
-| `joint_2` | 22 | 1122 | 1132 | -1 | no |
-| `joint_3` | 23 | 1123 | 1133 | -1 | no |
-| `joint_4` | 24 | 1124 | 1134 | +1 | yes |
-| `joint_5` | 25 | 1125 | 1135 | -1 | no |
-| `joint_6` | 26 | 1126 | 1136 | +1 | yes |
+| `joint_1` | 21 | 1121 | 1131 | +1 | да |
+| `joint_2` | 22 | 1122 | 1132 | -1 | нет |
+| `joint_3` | 23 | 1123 | 1133 | -1 | нет |
+| `joint_4` | 24 | 1124 | 1134 | +1 | да |
+| `joint_5` | 25 | 1125 | 1135 | -1 | нет |
+| `joint_6` | 26 | 1126 | 1136 | +1 | да |
 
-The firmware already converts native motor/encoder coordinates into
-manipulator coordinates. The ROS hardware interface must not apply another
-direction inversion.
+Прошивка уже преобразует внутренние координаты двигателя и энкодера в
+координаты манипулятора. Аппаратный интерфейс ROS не должен выполнять ещё одну
+инверсию направления.
 
-## Diagnostics
+## Диагностика
 
-Heartbeat health and its low eight firmware fault bits are published on the ROS
-`/diagnostics` topic. Current fault mapping is documented in the firmware
-README. Fault bits above bit 7 are available through firmware registers but do
-not fit into the heartbeat vendor status byte; a ROS register bridge is
-deferred.
+Состояние health из heartbeat и младшие восемь битов ошибок прошивки публикуются
+в топике ROS `/diagnostics`. Текущее соответствие ошибок описано в README
+прошивки. Биты ошибок старше 7 доступны через регистры прошивки, но не
+помещаются в байт vendor status сообщения heartbeat; мост регистров ROS пока
+отложен.
 
-The legacy fusion-offset fault (bit 0) is disabled in this baseline. Fusion
-offset remains observable through the firmware `pos_get` register but cannot
-degrade heartbeat health or block motion while slip detection is being tuned.
+Устаревшая ошибка fusion-offset (бит 0) в этой конфигурации отключена. Смещение
+fusion по-прежнему можно наблюдать через регистр прошивки `pos_get`, но во время
+настройки обнаружения проскальзывания оно не ухудшает health в heartbeat и не
+блокирует движение.

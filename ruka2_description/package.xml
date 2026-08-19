@@ -3,7 +3,7 @@
 <package format="3">
   <name>ruka2_description</name>
   <version>0.1.0</version>
-  <description>Canonical robot description and visualization package for RUKA2.</description>
+  <description>Основное описание робота и пакет визуализации RUKA2.</description>
 
   <maintainer email="info@vb-industrial.ru">VB-Industrial</maintainer>
   <license>Proprietary</license>

@@ -1,11 +1,17 @@
-"""Start the RUKA2 robot description and ros2_control stack."""
+"""Запуск описания робота RUKA2 и стека ros2_control."""
 
 import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration
+from launch.conditions import IfCondition
+from launch.substitutions import (
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    PythonExpression,
+)
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -13,6 +19,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_end_effector = LaunchConfiguration("use_end_effector")
+    end_effector_type = LaunchConfiguration("end_effector_type")
     can_interface = LaunchConfiguration("can_interface")
 
     package_share = get_package_share_directory("ruka2_control")
@@ -33,6 +40,8 @@ def generate_launch_description():
                     use_mock_hardware,
                     " use_end_effector:=",
                     use_end_effector,
+                    " end_effector_type:=",
+                    end_effector_type,
                     " can_interface:=",
                     can_interface,
                 ]
@@ -47,18 +56,24 @@ def generate_launch_description():
                 "use_mock_hardware",
                 default_value="true",
                 description=(
-                    "Use ros2_control GenericSystem instead of the real RUKA2 hardware"
+                    "Использовать ros2_control GenericSystem вместо реального оборудования RUKA2"
                 ),
             ),
             DeclareLaunchArgument(
                 "use_end_effector",
                 default_value="true",
-                description="Include the gripper visual and collision geometry",
+                description="Добавить визуальную и коллизионную геометрию захвата",
+            ),
+            DeclareLaunchArgument(
+                "end_effector_type",
+                default_value="mechanical",
+                choices=["mechanical", "electromagnetic", "none"],
+                description="Выбрать тип установленного захвата",
             ),
             DeclareLaunchArgument(
                 "can_interface",
                 default_value="vcan1.0",
-                description="SocketCAN interface used by the real hardware plugin",
+                description="Интерфейс SocketCAN для плагина реального оборудования",
             ),
             Node(
                 package="tf2_ros",
@@ -108,6 +123,26 @@ def generate_launch_description():
                     "--controller-manager",
                     "/controller_manager",
                 ],
+            ),
+            Node(
+                package="controller_manager",
+                executable="spawner",
+                arguments=[
+                    "mechanical_gripper_controller",
+                    "--controller-manager",
+                    "/controller_manager",
+                ],
+                condition=IfCondition(
+                    PythonExpression(
+                        [
+                            "'",
+                            use_mock_hardware,
+                            "'.lower() in ['true', '1', 'yes'] and '",
+                            end_effector_type,
+                            "'.lower() == 'mechanical'",
+                        ]
+                    )
+                ),
             ),
         ]
     )

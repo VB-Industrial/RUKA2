@@ -1,12 +1,25 @@
 # ruka2_description
 
-Canonical RUKA2 URDF/Xacro, meshes, collision geometry, inertials, frames, and
-standalone RViz viewer.
+Основная модель RUKA2 в URDF/Xacro, меши, коллизионная геометрия, инерциальные
+параметры, системы координат и отдельный запуск для просмотра в RViz.
 
-The package contains the canonical RUKA2 geometry baseline. The six arm axes
-are named `joint_1` through `joint_6`. Gripper and finger geometry is retained
-for future integration, but its joints are not part of the arm controller.
+Пакет содержит основную геометрическую модель RUKA2. Шесть осей руки имеют
+имена от `joint_1` до `joint_6`. Выбранный по умолчанию механический захват
+`mechanical` можно заменить моделью `electromagnetic` либо скрыть с помощью
+`end_effector_type:=none`. Суставы захвата не входят в контроллер руки.
+Общая система координат `tool0` следует за рабочей точкой выбранного захвата.
+Пальцы механического захвата связаны отношением mimic в URDF и движутся
+симметрично.
+
+Просмотр механического захвата:
 
 ```bash
 ros2 launch ruka2_description display.launch.py
+```
+
+Просмотр электромагнитного захвата:
+
+```bash
+ros2 launch ruka2_description display.launch.py \
+  end_effector_type:=electromagnetic
 ```

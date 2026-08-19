@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro
     name="ruka2_ros2_control"
-    params="name initial_positions_file use_mock_hardware:=true can_interface:=vcan1.0 node_id:=100 queue_length:=1000 feedback_timeout:=0.25 heartbeat_timeout:=2.5 activation_timeout:=5.0 startup_grace:=1.0 require_all_joints_on_activate:=true">
+    params="name initial_positions_file use_mock_hardware:=true end_effector_type:=mechanical can_interface:=vcan1.0 node_id:=100 queue_length:=1000 feedback_timeout:=0.25 heartbeat_timeout:=2.5 activation_timeout:=5.0 startup_grace:=1.0 require_all_joints_on_activate:=true">
     <xacro:property
       name="initial_positions"
       value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
@@ -10,6 +10,9 @@
     <xacro:property
       name="use_mock_hardware_bool"
       value="${str(use_mock_hardware).lower() in ['true', '1', 'yes']}"/>
+    <xacro:property
+      name="use_mock_mechanical_gripper"
+      value="${use_mock_hardware_bool and str(end_effector_type).lower() == 'mechanical'}"/>
 
     <ros2_control name="${name}" type="system">
       <hardware>
@@ -51,6 +54,16 @@
         </joint>
       </xacro:macro>
 
+      <xacro:macro name="ruka2_mock_gripper_joint" params="joint_name">
+        <joint name="${joint_name}">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+        </joint>
+      </xacro:macro>
+
       <xacro:ruka2_arm_joint joint_name="joint_1"/>
       <xacro:ruka2_arm_joint joint_name="joint_2"/>
       <xacro:ruka2_arm_joint joint_name="joint_3"/>
@@ -58,7 +71,12 @@
       <xacro:ruka2_arm_joint joint_name="joint_5"/>
       <xacro:ruka2_arm_joint joint_name="joint_6"/>
       <xacro:if value="${use_mock_hardware_bool}">
-        <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__first_fin"/>
+        <xacro:if value="${use_mock_mechanical_gripper}">
+          <xacro:ruka2_mock_gripper_joint joint_name="link_hand_cyl__first_fin"/>
+        </xacro:if>
+        <xacro:unless value="${use_mock_mechanical_gripper}">
+          <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__first_fin"/>
+        </xacro:unless>
         <xacro:ruka2_mock_passive_joint joint_name="link_hand_cyl__second_fin"/>
       </xacro:if>
     </ros2_control>

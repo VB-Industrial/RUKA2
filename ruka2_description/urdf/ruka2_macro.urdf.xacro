@@ -1,14 +1,34 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!--
-    Canonical RUKA2 geometry imported from the delivered ruka.urdf baseline.
-    The six arm axes are normalized to joint_1...joint_6. The gripper links
-    remain in the description for future integration but are not controlled.
+    Основная геометрическая модель RUKA2.
+    Шесть осей руки имеют имена joint_1...joint_6. Звенья захвата входят в
+    общее описание робота и готовы к интеграции с системой управления.
   -->
-  <xacro:macro name="ruka2_model" params="use_end_effector:=true">
+  <xacro:macro
+    name="ruka2_model"
+    params="use_end_effector:=true end_effector_type:=mechanical">
     <xacro:property
       name="use_end_effector_bool"
       value="${str(use_end_effector).lower() in ['true', '1', 'yes']}"/>
+    <xacro:property
+      name="end_effector_type_value"
+      value="${str(end_effector_type).lower()}"/>
+    <xacro:property
+      name="show_mechanical_end_effector"
+      value="${use_end_effector_bool and end_effector_type_value == 'mechanical'}"/>
+    <xacro:property
+      name="show_electromagnetic_end_effector"
+      value="${use_end_effector_bool and end_effector_type_value == 'electromagnetic'}"/>
+    <xacro:property
+      name="tool0_x"
+      value="${-0.0272404332 if show_electromagnetic_end_effector else 0.0}"/>
+    <xacro:property
+      name="tool0_z"
+      value="${0.0879375831 if show_electromagnetic_end_effector else (0.1162 if show_mechanical_end_effector else 0.0)}"/>
+    <xacro:property
+      name="tool0_pitch"
+      value="${-0.4363323130 if show_electromagnetic_end_effector else 0.0}"/>
     <material name="white">
             <color rgba="1 1 1 1"/>
         </material>
@@ -19,6 +39,10 @@
 
         <material name="blue">
             <color rgba="0 0 1 1"/>
+        </material>
+
+        <material name="gray">
+            <color rgba="0.45 0.45 0.45 1"/>
         </material>
 
         <link name="base_link">
@@ -650,8 +674,8 @@
         </joint>
 
         <link name="link_05">
-            <!-- Light body: 74 mm wide, 82 mm long and 100 mm high.
-                 The J5 axis is 30 mm above its lower face. -->
+            <!-- Светлый корпус: ширина 74 мм, длина 82 мм, высота 100 мм.
+                 Ось J5 расположена на 30 мм выше нижней плоскости. -->
             <visual>
                 <origin rpy="0 1.57 0" xyz="0.020 0 0" />
                 <geometry>
@@ -675,7 +699,7 @@
         </joint>
 
         <link name="link_05_red">
-            <!-- Front cover towards the gripper: 20 mm thick. -->
+            <!-- Передняя крышка со стороны захвата: толщина 20 мм. -->
             <visual>
                 <origin rpy="0 1.57 0" xyz="0.020 -0.051 0" />
                 <geometry>
@@ -691,7 +715,7 @@
                 </geometry>
             </collision>
 
-            <!-- Rear cover: 27 mm thick. -->
+            <!-- Задняя крышка: толщина 27 мм. -->
             <visual>
                 <origin rpy="0 1.57 0" xyz="0.020 0.0545 0" />
                 <geometry>
@@ -720,7 +744,7 @@
         </joint>
 
         <link name="link_06">
-            <!-- The distal face is the gripper mounting plane. -->
+            <!-- Торцевая плоскость используется для установки захвата. -->
             <visual>
                 <origin rpy="0 0 0" xyz="0 0 -0.0125" />
                 <geometry>
@@ -745,7 +769,7 @@
         </joint>
 
         <link name="link_hand_cyl">
-          <xacro:if value="${use_end_effector_bool}">
+          <xacro:if value="${show_mechanical_end_effector}">
             <inertial>
                 <mass value="0.01"/>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -768,7 +792,38 @@
                 </geometry>
             </collision>
           </xacro:if>
+          <xacro:if value="${show_electromagnetic_end_effector}">
+            <!-- Между окончанием link_05 и краем STL оставлено 5 мм link_06. -->
+            <visual name="electromagnetic_gripper_visual">
+              <origin
+                rpy="0 0 -1.5707963268"
+                xyz="-0.02 -0.0150980395 -0.0162865356"/>
+              <geometry>
+                <mesh filename="package://ruka2_description/meshes/mag-gripper.stl"/>
+              </geometry>
+              <material name="gray"/>
+            </visual>
+            <collision name="electromagnetic_gripper_collision">
+              <origin
+                rpy="0 0 -1.5707963268"
+                xyz="-0.02 -0.0150980395 -0.0162865356"/>
+              <geometry>
+                <mesh filename="package://ruka2_description/meshes/mag-gripper.stl"/>
+              </geometry>
+            </collision>
+          </xacro:if>
         </link>
+
+        <!-- Общая TCP MoveIt: между концами механических пальцев, на рабочей
+             плоскости магнита либо в link_06, если захват не выбран. -->
+        <joint name="link_06__tool0" type="fixed">
+            <origin
+              rpy="0 ${tool0_pitch} 0"
+              xyz="${tool0_x} 0 ${tool0_z}"/>
+            <parent link="link_06"/>
+            <child link="tool0"/>
+        </joint>
+        <link name="tool0"/>
 
         <joint name="link_hand_cyl__first_fin" type="prismatic">
             <parent link="link_hand_cyl"/>
@@ -779,7 +834,7 @@
         </joint>
 
         <link name="first_fin">
-          <xacro:if value="${use_end_effector_bool}">
+          <xacro:if value="${show_mechanical_end_effector}">
             <inertial>
                 <mass value="0.01"/>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -810,10 +865,16 @@
             <origin rpy="1.57 0 0" xyz="0 -0.005 0.0642"/>
             <axis xyz="0 0 1"/>
             <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            <!-- Оси суставов зеркальны, поэтому multiplier 1 перемещает пальцы
+                 на одинаковое расстояние в противоположных направлениях. -->
+            <mimic
+              joint="link_hand_cyl__first_fin"
+              multiplier="1.0"
+              offset="0.0"/>
         </joint>
 
         <link name="second_fin">
-          <xacro:if value="${use_end_effector_bool}">
+          <xacro:if value="${show_mechanical_end_effector}">
             <inertial>
                 <mass value="0.01"/>
                 <origin rpy="0 0 0" xyz="0 0 0"/>

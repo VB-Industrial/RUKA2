@@ -8,6 +8,7 @@
     default="$(find ruka2_control)/config/initial_positions.yaml"/>
   <xacro:arg name="use_mock_hardware" default="true"/>
   <xacro:arg name="use_end_effector" default="true"/>
+  <xacro:arg name="end_effector_type" default="mechanical"/>
   <xacro:arg name="can_interface" default="vcan1.0"/>
   <xacro:arg name="node_id" default="100"/>
   <xacro:arg name="queue_length" default="1000"/>
@@ -17,11 +18,14 @@
   <xacro:arg name="startup_grace" default="1.0"/>
   <xacro:arg name="require_all_joints_on_activate" default="true"/>
 
-  <xacro:ruka2_model use_end_effector="$(arg use_end_effector)"/>
+  <xacro:ruka2_model
+    use_end_effector="$(arg use_end_effector)"
+    end_effector_type="$(arg end_effector_type)"/>
   <xacro:ruka2_ros2_control
     name="Ruka2System"
     initial_positions_file="$(arg initial_positions_file)"
     use_mock_hardware="$(arg use_mock_hardware)"
+    end_effector_type="$(arg end_effector_type)"
     can_interface="$(arg can_interface)"
     node_id="$(arg node_id)"
     queue_length="$(arg queue_length)"

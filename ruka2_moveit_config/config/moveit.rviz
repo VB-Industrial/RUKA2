@@ -24,8 +24,8 @@ Visualization Manager:
         Trajectory Topic: display_planned_path
       Planning Request:
         Colliding Link Color: 255; 0; 0
-        Goal State Alpha: 0.65
-        Goal State Color: 170; 170; 170
+        Goal State Alpha: 1.0
+        Goal State Color: 255; 255; 255
         Planning Group: ruka_arm_controller
         Query Goal State: true
         Query Start State: false

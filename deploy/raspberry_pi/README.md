@@ -1,31 +1,26 @@
-# Raspberry Pi deployment
+# Развёртывание на Raspberry Pi
 
-Target: Ubuntu 24.04 on Raspberry Pi with ROS 2 Jazzy.
+Целевая система: Raspberry Pi с Ubuntu 24.04 и ROS 2 Jazzy.
 
-Two runtime profiles are planned:
+Предусмотрены два профиля запуска:
 
-- `server`: Ethernet-CAN, `ruka2_control`, controller manager, state publisher,
-  diagnostics;
-- `workstation`: the server profile plus desktop environment, MoveIt, RViz, and
-  local visualization.
+- `server`: Ethernet-CAN, `ruka2_control`, controller manager, публикация
+  состояния робота и диагностика;
+- `workstation`: профиль `server`, графическое окружение, MoveIt, RViz и
+  локальная визуализация.
 
-The Ethernet-CAN host software creates SocketCAN-compatible `vcan1.x`
-interfaces. The initial board mapping is:
+ПО Ethernet-CAN на хосте создаёт совместимые с SocketCAN интерфейсы `vcan1.x`.
+Исходное распределение шин:
 
-- `bus0` / `vcan1.0`: RUKA2 arm;
-- `bus1` / `vcan1.1`: gripper;
-- `bus2` / `vcan1.2`: reserved for the future powerboard implementation.
+- `bus0` / `vcan1.0`: рука RUKA2;
+- `bus1` / `vcan1.1`: захват;
+- `bus2` / `vcan1.2`: резерв для будущей платы питания.
 
-The checked-in host-managed configuration in `ethernet-can/ruka1.json` targets
-the Raspberry Pi Ethernet address `192.168.30.146` and the board hostname
-`ruka1.local`. Its CAN FD profile is derived from the pinned RUKA2 joint
-firmware: 1 Mbit/s nominal, 8 Mbit/s data with BRS. The 10 ms integration
-period follows the upstream Ethernet-CAN host-managed example.
+Конфигурация `ethernet-can/ruka1.json`, управляемая со стороны хоста, рассчитана
+на Ethernet-адрес Raspberry Pi `192.168.30.146` и имя платы `ruka1.local`.
+Параметры CAN FD: номинальная скорость 1 Мбит/с, скорость передачи данных
+8 Мбит/с с BRS. Период интеграции Ethernet-CAN равен 10 мс.
 
-The target host has been audited and validated with this configuration. Import
-of its generic provisioning scripts and systemd units remains separate from
-the board-specific JSON tracked here.
-
-Upstream documentation:
-
-- https://github.com/VBCores/ethernet-can
+Целевой хост проверен с этой конфигурацией. Перенос общих сценариев подготовки
+системы и модулей systemd выполняется отдельно от хранящегося здесь JSON-файла
+конкретной платы.

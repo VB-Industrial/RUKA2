@@ -1,4 +1,4 @@
-"""Start the complete RUKA2 control, planning, and visualization system."""
+"""Запуск полной системы управления, планирования и визуализации RUKA2."""
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
@@ -10,6 +10,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_end_effector = LaunchConfiguration("use_end_effector")
+    end_effector_type = LaunchConfiguration("end_effector_type")
     can_interface = LaunchConfiguration("can_interface")
     use_rviz = LaunchConfiguration("use_rviz")
 
@@ -22,6 +23,7 @@ def generate_launch_description():
         launch_arguments={
             "use_mock_hardware": use_mock_hardware,
             "use_end_effector": use_end_effector,
+            "end_effector_type": end_effector_type,
             "can_interface": can_interface,
         }.items(),
     )
@@ -38,6 +40,7 @@ def generate_launch_description():
         launch_arguments={
             "use_mock_hardware": use_mock_hardware,
             "use_end_effector": use_end_effector,
+            "end_effector_type": end_effector_type,
             "can_interface": can_interface,
             "use_rviz": use_rviz,
         }.items(),
@@ -48,22 +51,28 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "use_mock_hardware",
                 default_value="true",
-                description="Use mock hardware; set false for the real Cyphal system",
+                description="Использовать mock-оборудование; false включает реальную систему Cyphal",
             ),
             DeclareLaunchArgument(
                 "use_end_effector",
                 default_value="true",
-                description="Include the gripper visual and collision geometry",
+                description="Добавить визуальную и коллизионную геометрию захвата",
+            ),
+            DeclareLaunchArgument(
+                "end_effector_type",
+                default_value="mechanical",
+                choices=["mechanical", "electromagnetic", "none"],
+                description="Выбрать тип установленного захвата",
             ),
             DeclareLaunchArgument(
                 "can_interface",
                 default_value="vcan1.0",
-                description="SocketCAN interface used by the real hardware plugin",
+                description="Интерфейс SocketCAN для плагина реального оборудования",
             ),
             DeclareLaunchArgument(
                 "use_rviz",
                 default_value="true",
-                description="Start RViz with the MoveIt plugin",
+                description="Запустить RViz с плагином MoveIt",
             ),
             control,
             moveit,

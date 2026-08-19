@@ -1,6 +1,6 @@
-# Interfaces
+# Интерфейсы
 
-This directory documents contracts shared between independently built parts of
-RUKA2. It is not a ROS package.
+В этом каталоге описаны контракты между независимо собираемыми частями RUKA2.
+Каталог не является пакетом ROS.
 
-- `cyphal.md` records the controller-to-firmware transport contract.
+- `cyphal.md` содержит транспортный контракт между контроллером и прошивкой.

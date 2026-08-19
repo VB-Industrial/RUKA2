@@ -24,3 +24,7 @@ ruka_arm_controller:
   planner_configs:
     - RRTConnect
     - RRTstar
+
+mechanical_gripper:
+  planner_configs:
+    - RRTConnect

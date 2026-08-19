@@ -1,4 +1,4 @@
-"""Start MoveIt and optional RViz against an existing control stack."""
+"""Запуск MoveIt и, при необходимости, RViz с существующим стеком управления."""
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -12,6 +12,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_end_effector = LaunchConfiguration("use_end_effector")
+    end_effector_type = LaunchConfiguration("end_effector_type")
     can_interface = LaunchConfiguration("can_interface")
     use_rviz = LaunchConfiguration("use_rviz")
 
@@ -22,10 +23,14 @@ def generate_launch_description():
             mappings={
                 "use_mock_hardware": use_mock_hardware,
                 "use_end_effector": use_end_effector,
+                "end_effector_type": end_effector_type,
                 "can_interface": can_interface,
             },
         )
-        .robot_description_semantic(file_path="config/ruka2.srdf")
+        .robot_description_semantic(
+            file_path="config/ruka2.srdf",
+            mappings={"end_effector_type": end_effector_type},
+        )
         .planning_scene_monitor()
         .trajectory_execution(
             file_path="config/moveit_controllers.yaml",
@@ -66,22 +71,28 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "use_mock_hardware",
                 default_value="true",
-                description="Build the same robot description as the active control profile",
+                description="Создать описание робота, соответствующее активному профилю управления",
             ),
             DeclareLaunchArgument(
                 "use_end_effector",
                 default_value="true",
-                description="Include the gripper visual and collision geometry",
+                description="Добавить визуальную и коллизионную геометрию захвата",
+            ),
+            DeclareLaunchArgument(
+                "end_effector_type",
+                default_value="mechanical",
+                choices=["mechanical", "electromagnetic", "none"],
+                description="Выбрать тип установленного захвата",
             ),
             DeclareLaunchArgument(
                 "can_interface",
                 default_value="vcan1.0",
-                description="SocketCAN interface embedded in the real robot description",
+                description="Интерфейс SocketCAN в описании реального робота",
             ),
             DeclareLaunchArgument(
                 "use_rviz",
                 default_value="true",
-                description="Start RViz with the MoveIt plugin",
+                description="Запустить RViz с плагином MoveIt",
             ),
             move_group,
             rviz,

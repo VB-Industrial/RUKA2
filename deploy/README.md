@@ -1,4 +1,4 @@
-# Deployment
+# Развёртывание
 
-Deployment assets are kept outside ROS packages. Raspberry Pi provisioning and
-runtime files live in `raspberry_pi`.
+Файлы развёртывания хранятся вне пакетов ROS. Настройки Raspberry Pi и файлы
+для запуска находятся в каталоге `raspberry_pi`.

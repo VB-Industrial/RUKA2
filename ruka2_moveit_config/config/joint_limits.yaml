@@ -1,6 +1,7 @@
-# Planning velocity limits are 16/9 of the initial conservative values. With an
-# RViz scaling factor of 0.1 this gives about 0.0178 rad/s. Real commands remain
-# capped at 0.1 rad/s by the unchanged hardware interface.
+# Ограничения скорости планирования составляют 16/9 от исходных консервативных
+# значений. При коэффициенте RViz 0.1 получается около 0.0178 рад/с. Реальные
+# команды по-прежнему ограничены значением 0.1 рад/с в неизменённом аппаратном
+# интерфейсе.
 default_velocity_scaling_factor: 1.0
 default_acceleration_scaling_factor: 0.1
 
@@ -35,3 +36,8 @@ joint_limits:
     max_velocity: 0.177778
     has_acceleration_limits: true
     max_acceleration: 2.666667
+  link_hand_cyl__first_fin:
+    has_velocity_limits: true
+    max_velocity: 0.2
+    has_acceleration_limits: true
+    max_acceleration: 0.4

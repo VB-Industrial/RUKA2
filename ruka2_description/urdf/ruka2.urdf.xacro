@@ -2,5 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
   <xacro:include filename="$(find ruka2_description)/urdf/ruka2_macro.urdf.xacro"/>
   <xacro:arg name="use_end_effector" default="true"/>
-  <xacro:ruka2_model use_end_effector="$(arg use_end_effector)"/>
+  <xacro:arg name="end_effector_type" default="mechanical"/>
+  <xacro:ruka2_model
+    use_end_effector="$(arg use_end_effector)"
+    end_effector_type="$(arg end_effector_type)"/>
 </robot>

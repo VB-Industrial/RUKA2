@@ -1,12 +1,9 @@
-# Firmware
+# Прошивка
 
-`ruka2_firmware` is an external Git submodule tracking:
+Компонент `ruka2_firmware` находится в одноимённом каталоге и намеренно исключён
+из обнаружения ROS/colcon. Для сборки, прошивки и отладки используйте инструкции
+и пресеты CMake внутри этого каталога.
 
-`https://github.com/VB-Industrial/silverhand_arm_firmware.git`
-
-It is deliberately excluded from ROS/colcon discovery. Build, flash, and debug
-it using the instructions and CMake presets in the submodule.
-
-Select `SR_JOINT_INDEX` manually for the currently connected joint before each
-build and flash operation. Commit reusable firmware fixes upstream first, then
-update the submodule revision in RUKA2.
+Перед каждой сборкой и прошивкой вручную задайте `SR_JOINT_INDEX` для
+подключённого сустава. Изменения прошивки ведутся внутри компонента
+`ruka2_firmware`.
