@@ -3,10 +3,17 @@
 Конфигурация MoveIt для шестиосевой руки RUKA2. Группа планирования и контроллер
 траектории имеют одинаковое имя `ruka_arm_controller`.
 
-Запуск полного mock-окружения:
+Запуск полной системы с реальным аппаратным интерфейсом:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py
+```
+
+Запуск полного mock-окружения без реального оборудования:
+
+```bash
+ros2 launch ruka2_moveit_config full_system.launch.py \
+  use_mock_hardware:=true
 ```
 
 Запуск с электромагнитным захватом:
@@ -23,11 +30,11 @@ ros2 launch ruka2_moveit_config full_system.launch.py \
 ros2 launch ruka2_moveit_config full_system.launch.py end_effector_type:=none
 ```
 
-Запуск с существующим интерфейсом реального оборудования:
+Явное указание CAN-интерфейса реального оборудования:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
-  use_mock_hardware:=false can_interface:=vcan1.0
+  can_interface:=vcan1.0
 ```
 
 Если `ruka2_control/ros2_control.launch.py` уже запущен на этом или другом
@@ -35,7 +42,7 @@ ros2 launch ruka2_moveit_config full_system.launch.py \
 
 ```bash
 ros2 launch ruka2_moveit_config moveit.launch.py \
-  use_mock_hardware:=false
+  end_effector_type:=mechanical
 ```
 
 Для работы без графического интерфейса укажите `use_rviz:=false`. Цепочка

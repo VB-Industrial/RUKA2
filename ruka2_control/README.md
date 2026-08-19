@@ -3,10 +3,16 @@
 Существующий аппаратный интерфейс Cyphal для RUKA2, описание робота для
 `ros2_control`, конфигурация контроллеров и запуск системы управления.
 
-По умолчанию используется безопасное mock-оборудование:
+По умолчанию используется реальный аппаратный интерфейс Cyphal/SocketCAN:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py
+```
+
+Для проверки без оборудования включите mock-профиль явно:
+
+```bash
+ros2 launch ruka2_control ros2_control.launch.py use_mock_hardware:=true
 ```
 
 Значение `end_effector_type` можно установить в `mechanical`, `electromagnetic`
@@ -15,11 +21,11 @@ ros2 launch ruka2_control ros2_control.launch.py
 mock-профиле `mechanical_gripper_controller` управляет ведущим пальцем, а второй
 палец следует за ним через отношение mimic в URDF.
 
-Запуск с плагином реального оборудования без изменения структуры запуска:
+Явное указание CAN-интерфейса реального оборудования:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py \
-  use_mock_hardware:=false can_interface:=vcan1.0
+  can_interface:=vcan1.0
 ```
 
 Оба профиля предоставляют шесть суставов руки через `ruka_arm_controller`.

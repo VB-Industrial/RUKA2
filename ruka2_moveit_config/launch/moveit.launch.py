@@ -70,7 +70,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "use_mock_hardware",
-                default_value="true",
+                default_value="false",
                 description="Создать описание робота, соответствующее активному профилю управления",
             ),
             DeclareLaunchArgument(

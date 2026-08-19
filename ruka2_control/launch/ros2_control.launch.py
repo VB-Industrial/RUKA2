@@ -54,7 +54,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "use_mock_hardware",
-                default_value="true",
+                default_value="false",
                 description=(
                     "Использовать ros2_control GenericSystem вместо реального оборудования RUKA2"
                 ),

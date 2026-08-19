@@ -27,7 +27,7 @@ def render_control_description(*arguments):
 
 
 def test_mock_hardware_exports_all_arm_joints():
-    robot = render_control_description()
+    robot = render_control_description("use_mock_hardware:=true")
     control = robot.find("ros2_control")
     assert control is not None
     assert control.findtext("hardware/plugin") == "mock_components/GenericSystem"
@@ -46,8 +46,8 @@ def test_mock_hardware_exports_all_arm_joints():
             assert command_interfaces == []
 
 
-def test_real_hardware_exports_only_six_arm_joints():
-    robot = render_control_description("use_mock_hardware:=false")
+def test_real_hardware_is_default_and_exports_only_six_arm_joints():
+    robot = render_control_description()
     control = robot.find("ros2_control")
     assert control is not None
     assert control.findtext("hardware/plugin") == "ruka2_control/Ruka2System"
@@ -56,11 +56,14 @@ def test_real_hardware_exports_only_six_arm_joints():
 
 
 def test_end_effector_geometry_is_optional_without_changing_the_contract():
-    mechanical = render_control_description()
+    mechanical = render_control_description("use_mock_hardware:=true")
     electromagnetic = render_control_description(
+        "use_mock_hardware:=true",
         "end_effector_type:=electromagnetic"
     )
-    without_end_effector = render_control_description("end_effector_type:=none")
+    without_end_effector = render_control_description(
+        "use_mock_hardware:=true", "end_effector_type:=none"
+    )
 
     for link_name in END_EFFECTOR_LINKS:
         visible_link = mechanical.find(f"./link[@name='{link_name}']")

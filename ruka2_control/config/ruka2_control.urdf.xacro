@@ -6,7 +6,7 @@
   <xacro:arg
     name="initial_positions_file"
     default="$(find ruka2_control)/config/initial_positions.yaml"/>
-  <xacro:arg name="use_mock_hardware" default="true"/>
+  <xacro:arg name="use_mock_hardware" default="false"/>
   <xacro:arg name="use_end_effector" default="true"/>
   <xacro:arg name="end_effector_type" default="mechanical"/>
   <xacro:arg name="can_interface" default="vcan1.0"/>

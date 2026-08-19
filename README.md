@@ -32,6 +32,9 @@ source install/setup.bash
 
 ## Запуск
 
+Подробное описание launch-файлов и готовые сценарии приведены в
+[`docs/launch-guide.md`](docs/launch-guide.md).
+
 Только просмотр модели:
 
 ```bash
@@ -39,16 +42,23 @@ ros2 launch ruka2_description display.launch.py
 ```
 
 Публикация состояния робота и `ros2_control`. По умолчанию используется
-безопасное mock-оборудование:
+реальный аппаратный интерфейс Cyphal/SocketCAN:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-Полное mock-окружение: управление, MoveIt и RViz:
+Полная система для реального оборудования: управление, MoveIt и RViz:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py
+```
+
+Для автономной проверки без оборудования включите mock-профиль явно:
+
+```bash
+ros2 launch ruka2_moveit_config full_system.launch.py \
+  use_mock_hardware:=true
 ```
 
 По умолчанию выбран механический захват. Чтобы использовать электромагнитный
@@ -79,18 +89,18 @@ ros2 launch ruka2_moveit_config full_system.launch.py end_effector_type:=none
 В mock-профиле движение выполняет `mechanical_gripper_controller`; для профиля
 реального оборудования этот контроллер намеренно не запускается.
 
-Реальная рука:
+Явное указание CAN-интерфейса реальной руки:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
-  use_mock_hardware:=false can_interface:=vcan1.0
+  can_interface:=vcan1.0
 ```
 
 MoveIt и RViz при уже запущенном экземпляре `ruka2_control`:
 
 ```bash
 ros2 launch ruka2_moveit_config moveit.launch.py \
-  use_mock_hardware:=false
+  end_effector_type:=mechanical
 ```
 
 Для запуска MoveIt без графического интерфейса укажите `use_rviz:=false`.
