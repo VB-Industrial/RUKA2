@@ -31,6 +31,12 @@ def test_mock_hardware_exports_all_arm_joints():
     control = robot.find("ros2_control")
     assert control is not None
     assert control.findtext("hardware/plugin") == "mock_components/GenericSystem"
+    assert robot.find("./joint[@name='link_hand_cyl__first_fin']").attrib[
+        "type"
+    ] == "prismatic"
+    assert robot.find("./joint[@name='link_hand_cyl__second_fin']").attrib[
+        "type"
+    ] == "prismatic"
 
     control_joints = {joint.attrib["name"] for joint in control.findall("joint")}
     assert control_joints == ARM_JOINTS | PASSIVE_JOINTS
@@ -53,6 +59,12 @@ def test_real_hardware_is_default_and_exports_only_six_arm_joints():
     assert control.findtext("hardware/plugin") == "ruka2_control/Ruka2System"
     assert control.findtext("hardware/param[@name='can_interface']") == "vcan1.0"
     assert {joint.attrib["name"] for joint in control.findall("joint")} == ARM_JOINTS
+    for joint_name in PASSIVE_JOINTS:
+        joint = robot.find(f"./joint[@name='{joint_name}']")
+        assert joint.attrib["type"] == "fixed"
+        assert joint.find("axis") is None
+        assert joint.find("limit") is None
+        assert joint.find("mimic") is None
 
 
 def test_end_effector_geometry_is_optional_without_changing_the_contract():

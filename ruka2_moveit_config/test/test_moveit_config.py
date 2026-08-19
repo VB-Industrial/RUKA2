@@ -15,12 +15,13 @@ def load_yaml(name):
     return yaml.safe_load((PACKAGE_ROOT / "config" / name).read_text(encoding="utf-8"))
 
 
-def render_srdf(end_effector_type="mechanical"):
+def render_srdf(end_effector_type="mechanical", use_mock_hardware=True):
     result = subprocess.run(
         [
             "xacro",
             str(PACKAGE_ROOT / "config/ruka2.srdf"),
             f"end_effector_type:={end_effector_type}",
+            f"use_mock_hardware:={str(use_mock_hardware).lower()}",
         ],
         check=True,
         capture_output=True,
@@ -56,6 +57,10 @@ def test_srdf_and_controller_contract_are_consistent():
     assert render_srdf("electromagnetic").find(
         "./group[@name='mechanical_gripper']"
     ) is None
+
+    real_srdf = render_srdf(use_mock_hardware=False)
+    assert real_srdf.find("./group[@name='mechanical_gripper']") is None
+    assert real_srdf.findall("passive_joint") == []
 
     start = srdf.find("./group_state[@name='start']")
     assert start is not None

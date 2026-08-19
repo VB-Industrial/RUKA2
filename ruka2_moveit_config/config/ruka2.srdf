@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka2">
   <xacro:arg name="end_effector_type" default="mechanical"/>
+  <xacro:arg name="use_mock_hardware" default="false"/>
   <xacro:property
     name="selected_end_effector"
     value="$(arg end_effector_type)"/>
+  <xacro:property
+    name="use_mock_hardware_bool"
+    value="${str('$(arg use_mock_hardware)').lower() in ['true', '1', 'yes']}"/>
 
   <group name="ruka_arm_controller">
     <chain base_link="base_link" tip_link="tool0"/>
   </group>
 
-  <xacro:if value="${selected_end_effector == 'mechanical'}">
+  <xacro:if value="${use_mock_hardware_bool and selected_end_effector == 'mechanical'}">
     <!-- Одна независимая координата раскрытия; второй палец связан через mimic в URDF. -->
     <group name="mechanical_gripper">
       <joint name="link_hand_cyl__first_fin"/>
@@ -58,11 +62,14 @@
 
   <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="base_link"/>
 
-  <!-- Палец mimic никогда не является независимой переменной планирования. -->
-  <passive_joint name="link_hand_cyl__second_fin"/>
-  <xacro:unless value="${selected_end_effector == 'mechanical'}">
-    <passive_joint name="link_hand_cyl__first_fin"/>
-  </xacro:unless>
+  <!-- Подвижные пальцы существуют только в mock-профиле. Палец mimic никогда
+       не является независимой переменной планирования. -->
+  <xacro:if value="${use_mock_hardware_bool}">
+    <passive_joint name="link_hand_cyl__second_fin"/>
+    <xacro:unless value="${selected_end_effector == 'mechanical'}">
+      <passive_joint name="link_hand_cyl__first_fin"/>
+    </xacro:unless>
+  </xacro:if>
 
   <disable_collisions link1="base_link" link2="link_01" reason="Adjacent"/>
   <disable_collisions link1="base_link" link2="link_01_red" reason="Never"/>

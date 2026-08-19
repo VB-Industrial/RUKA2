@@ -29,7 +29,10 @@ def generate_launch_description():
         )
         .robot_description_semantic(
             file_path="config/ruka2.srdf",
-            mappings={"end_effector_type": end_effector_type},
+            mappings={
+                "end_effector_type": end_effector_type,
+                "use_mock_hardware": use_mock_hardware,
+            },
         )
         .planning_scene_monitor()
         .trajectory_execution(

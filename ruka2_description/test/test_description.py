@@ -54,18 +54,32 @@ def test_description_has_expected_arm_and_retained_gripper():
 def test_arm_limits_and_meshes_come_from_canonical_model():
     robot = expand_xacro("urdf/ruka2.urdf.xacro")
     expected_limits = {
-        "joint_1": ("-2.96", "2.96", "0.75"),
-        "joint_2": ("-3.57", "0.05", "0.6"),
-        "joint_3": ("-0.035", "5.23", "0.75"),
-        "joint_4": ("-2.87", "2.87", "2.0"),
-        "joint_5": ("-2.44", "2.44", "2.5"),
-        "joint_6": ("-3.14", "3.14", "6.0"),
+        "joint_1": ("-2.91", "2.91", "0.75"),
+        "joint_2": ("-3.37", "0.02", "0.6"),
+        "joint_3": ("0.0", "5.11", "0.75"),
+        "joint_4": ("-2.42", "3.20", "2.0"),
+        "joint_5": ("-2.39", "2.39", "2.5"),
+        "joint_6": ("-2.82", "2.84", "6.0"),
+    }
+    expected_soft_limits = {
+        "joint_1": ("-2.833300981", "2.833300981"),
+        "joint_2": ("-3.293300981", "-0.056699019"),
+        "joint_3": ("0.076699019", "5.033300981"),
+        "joint_4": ("-2.343300981", "3.123300981"),
+        "joint_5": ("-2.313300981", "2.313300981"),
+        "joint_6": ("-2.743300981", "2.763300981"),
     }
     joints = {joint.attrib["name"]: joint for joint in robot.findall("joint")}
     for name, expected in expected_limits.items():
         limit = joints[name].find("limit")
         assert limit is not None
         assert (limit.attrib["lower"], limit.attrib["upper"], limit.attrib["velocity"]) == expected
+        safety = joints[name].find("safety_controller")
+        assert safety is not None
+        assert (
+            safety.attrib["soft_lower_limit"],
+            safety.attrib["soft_upper_limit"],
+        ) == expected_soft_limits[name]
 
     mesh_uris = {mesh.attrib["filename"] for mesh in robot.findall(".//mesh")}
     assert mesh_uris == {
@@ -136,3 +150,18 @@ def test_no_end_effector_mode_remains_backward_compatible():
         assert hand.find("collision") is None
         tool0_origin = robot.find("./joint[@name='link_06__tool0']/origin")
         assert tool0_origin.attrib == {"rpy": "0 0.0 0", "xyz": "0.0 0 0.0"}
+
+
+def test_gripper_joints_can_be_fixed_for_real_hardware():
+    for end_effector_type in ("mechanical", "electromagnetic", "none"):
+        robot = expand_xacro(
+            "urdf/ruka2.urdf.xacro",
+            "enable_gripper_motion:=false",
+            f"end_effector_type:={end_effector_type}",
+        )
+        for joint_name in FINGER_JOINTS:
+            joint = robot.find(f"./joint[@name='{joint_name}']")
+            assert joint.attrib["type"] == "fixed"
+            assert joint.find("axis") is None
+            assert joint.find("limit") is None
+            assert joint.find("mimic") is None

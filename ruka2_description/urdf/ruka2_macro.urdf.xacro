@@ -7,13 +7,16 @@
   -->
   <xacro:macro
     name="ruka2_model"
-    params="use_end_effector:=true end_effector_type:=mechanical">
+    params="use_end_effector:=true end_effector_type:=mechanical enable_gripper_motion:=true">
     <xacro:property
       name="use_end_effector_bool"
       value="${str(use_end_effector).lower() in ['true', '1', 'yes']}"/>
     <xacro:property
       name="end_effector_type_value"
       value="${str(end_effector_type).lower()}"/>
+    <xacro:property
+      name="enable_gripper_motion_bool"
+      value="${str(enable_gripper_motion).lower() in ['true', '1', 'yes']}"/>
     <xacro:property
       name="show_mechanical_end_effector"
       value="${use_end_effector_bool and end_effector_type_value == 'mechanical'}"/>
@@ -67,9 +70,9 @@
         <joint name="joint_1" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <safety_controller k_position="100.0" k_velocity="200.0" soft_lower_limit="-2.908" soft_upper_limit="2.908" />
+            <safety_controller k_position="100.0" k_velocity="200.0" soft_lower_limit="-2.833300981" soft_upper_limit="2.833300981" />
 
-            <limit effort="1000.0" lower="-2.96" upper="2.96" velocity="0.75"/>
+            <limit effort="1000.0" lower="-2.91" upper="2.91" velocity="0.75"/>
             <origin rpy="0 0 0" xyz="0 0 0.05"/>
             <parent link="base_link"/>
             <child link="link_01"/>
@@ -182,9 +185,9 @@
         <joint name="joint_2" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.518" soft_upper_limit="-0.052" /> -->
+            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.293300981" soft_upper_limit="-0.056699019" />
 
-            <limit effort="1000.0" lower="-3.57" upper="0.05" velocity="0.6"/>
+            <limit effort="1000.0" lower="-3.37" upper="0.02" velocity="0.6"/>
             <origin rpy="1.57 -1.57 0" xyz="0.017 0 0.189"/>   <!-- origin rpy="1.57 0 0"-->
             <parent link="link_01"/>
 
@@ -396,9 +399,9 @@
         <joint name="joint_3" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0.067" soft_upper_limit="5.178" /> -->
+            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0.076699019" soft_upper_limit="5.033300981" />
 
-            <limit effort="1000.0" lower="-0.035" upper="5.23" velocity="0.75"/>
+            <limit effort="1000.0" lower="0.0" upper="5.11" velocity="0.75"/>
             <origin rpy="0 0 0.0175" xyz="0 0.28 0"/>
             <!-- !!!!!!!!!!!!!!!!!!!!! /> -->
             <parent link="link_02"/>
@@ -484,9 +487,9 @@
         <joint name="joint_4" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.818" soft_upper_limit="2.818" />
+            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.343300981" soft_upper_limit="3.123300981" />
 
-            <limit effort="1000.0" lower="-2.87" upper="2.87" velocity="2.0"/>
+            <limit effort="1000.0" lower="-2.42" upper="3.20" velocity="2.0"/>
             <origin rpy="1.57 0 0" xyz="0.072 0 0"/>
             <parent link="link_03"/>
             <child link="link_04"/>
@@ -665,9 +668,9 @@
         <joint name="joint_5" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.388" soft_upper_limit="2.388" />
+            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.313300981" soft_upper_limit="2.313300981" />
 
-            <limit effort="1000.0" lower="-2.44" upper="2.44" velocity="2.5"/>
+            <limit effort="1000.0" lower="-2.39" upper="2.39" velocity="2.5"/>
             <origin rpy="-1.57 0 0" xyz="0 0 0.264"/>
             <parent link="link_04"/>
             <child link="link_05"/>
@@ -735,9 +738,9 @@
         <joint name="joint_6" type="revolute">
             <axis xyz="0 0 1"/>
 
-            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.12" soft_upper_limit="3.12" />
+            <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.743300981" soft_upper_limit="2.763300981" />
 
-            <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="6.0"/>
+            <limit effort="1000.0" lower="-2.82" upper="2.84" velocity="6.0"/>
             <origin rpy="1.57 0 0" xyz="0 -0.086 0"/>
             <parent link="link_05"/>
             <child link="link_06"/>
@@ -825,12 +828,16 @@
         </joint>
         <link name="tool0"/>
 
-        <joint name="link_hand_cyl__first_fin" type="prismatic">
+        <joint
+          name="link_hand_cyl__first_fin"
+          type="${'prismatic' if enable_gripper_motion_bool else 'fixed'}">
             <parent link="link_hand_cyl"/>
             <child link="first_fin"/>
             <origin rpy="1.57 0 3.14" xyz="0 0.005 0.0642"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            <xacro:if value="${enable_gripper_motion_bool}">
+              <axis xyz="0 0 1"/>
+              <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            </xacro:if>
         </joint>
 
         <link name="first_fin">
@@ -859,18 +866,22 @@
           </xacro:if>
         </link>
 
-        <joint name="link_hand_cyl__second_fin" type="prismatic">
+        <joint
+          name="link_hand_cyl__second_fin"
+          type="${'prismatic' if enable_gripper_motion_bool else 'fixed'}">
             <parent link="link_hand_cyl"/>
             <child link="second_fin"/>
             <origin rpy="1.57 0 0" xyz="0 -0.005 0.0642"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
-            <!-- Оси суставов зеркальны, поэтому multiplier 1 перемещает пальцы
-                 на одинаковое расстояние в противоположных направлениях. -->
-            <mimic
-              joint="link_hand_cyl__first_fin"
-              multiplier="1.0"
-              offset="0.0"/>
+            <xacro:if value="${enable_gripper_motion_bool}">
+              <axis xyz="0 0 1"/>
+              <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+              <!-- Оси суставов зеркальны, поэтому multiplier 1 перемещает пальцы
+                   на одинаковое расстояние в противоположных направлениях. -->
+              <mimic
+                joint="link_hand_cyl__first_fin"
+                multiplier="1.0"
+                offset="0.0"/>
+            </xacro:if>
         </joint>
 
         <link name="second_fin">

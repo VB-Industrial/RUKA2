@@ -20,7 +20,8 @@
 
   <xacro:ruka2_model
     use_end_effector="$(arg use_end_effector)"
-    end_effector_type="$(arg end_effector_type)"/>
+    end_effector_type="$(arg end_effector_type)"
+    enable_gripper_motion="$(arg use_mock_hardware)"/>
   <xacro:ruka2_ros2_control
     name="Ruka2System"
     initial_positions_file="$(arg initial_positions_file)"
