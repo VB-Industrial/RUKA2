@@ -1,3 +1,4 @@
+import ast
 import subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -10,6 +11,28 @@ PASSIVE_JOINTS = {
     "link_hand_cyl__second_fin",
 }
 END_EFFECTOR_LINKS = {"link_hand_cyl", "first_fin", "second_fin"}
+
+
+def launch_argument_default(path, argument_name):
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not isinstance(node.func, ast.Name):
+            continue
+        if node.func.id != "DeclareLaunchArgument" or not node.args:
+            continue
+        if not isinstance(node.args[0], ast.Constant):
+            continue
+        if node.args[0].value != argument_name:
+            continue
+        default = next(
+            keyword.value
+            for keyword in node.keywords
+            if keyword.arg == "default_value"
+        )
+        return default.value
+    raise AssertionError(f"Launch argument {argument_name!r} was not found")
 
 
 def render_control_description(*arguments):
@@ -65,6 +88,11 @@ def test_real_hardware_is_default_and_exports_only_six_arm_joints():
         assert joint.find("axis") is None
         assert joint.find("limit") is None
         assert joint.find("mimic") is None
+
+
+def test_standalone_control_defaults_to_real_hardware():
+    launch_file = PACKAGE_ROOT / "launch/ros2_control.launch.py"
+    assert launch_argument_default(launch_file, "use_mock_hardware") == "false"
 
 
 def test_end_effector_geometry_is_optional_without_changing_the_contract():

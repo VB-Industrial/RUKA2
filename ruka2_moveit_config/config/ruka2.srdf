@@ -35,8 +35,8 @@
 
   <group_state name="start" group="ruka_arm_controller">
     <joint name="joint_1" value="0.0"/>
-    <joint name="joint_2" value="-0.032"/>
-    <joint name="joint_3" value="0.047"/>
+    <joint name="joint_2" value="-0.1"/>
+    <joint name="joint_3" value="0.1"/>
     <joint name="joint_4" value="0.0"/>
     <joint name="joint_5" value="0.0"/>
     <joint name="joint_6" value="0.0"/>

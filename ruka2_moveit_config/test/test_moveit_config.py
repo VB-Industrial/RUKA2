@@ -1,3 +1,4 @@
+import ast
 import subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -9,6 +10,28 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = PACKAGE_ROOT.parent
 EXPECTED_JOINTS = tuple(f"joint_{index}" for index in range(1, 7))
 GRIPPER_JOINT = "link_hand_cyl__first_fin"
+
+
+def launch_argument_default(path, argument_name):
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not isinstance(node.func, ast.Name):
+            continue
+        if node.func.id != "DeclareLaunchArgument" or not node.args:
+            continue
+        if not isinstance(node.args[0], ast.Constant):
+            continue
+        if node.args[0].value != argument_name:
+            continue
+        default = next(
+            keyword.value
+            for keyword in node.keywords
+            if keyword.arg == "default_value"
+        )
+        return default.value
+    raise AssertionError(f"Launch argument {argument_name!r} was not found")
 
 
 def load_yaml(name):
@@ -130,6 +153,11 @@ def test_rviz_uses_a_neutral_goal_state_overlay():
     assert planned_path["Loop Animation"] is False
     assert planned_path["State Display Time"] == "0.033 s"
     assert planned_path["Trajectory Topic"] == "display_planned_path"
+
+
+def test_full_system_defaults_to_local_mock_hardware():
+    launch_file = PACKAGE_ROOT / "launch/full_system.launch.py"
+    assert launch_argument_default(launch_file, "use_mock_hardware") == "true"
 
 
 def test_srdf_references_and_start_match_the_robot_description():

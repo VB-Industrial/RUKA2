@@ -41,24 +41,26 @@ source install/setup.bash
 ros2 launch ruka2_description display.launch.py
 ```
 
-Публикация состояния робота и `ros2_control`. По умолчанию используется
-реальный аппаратный интерфейс Cyphal/SocketCAN:
+Публикация состояния робота и `ros2_control`. Этот отдельный запуск по умолчанию
+использует реальный аппаратный интерфейс Cyphal/SocketCAN:
 
 ```bash
 ros2 launch ruka2_control ros2_control.launch.py
 ```
 
-Полная система для реального оборудования: управление, MoveIt и RViz:
+Полная локальная система для планирования и проверки без оборудования:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py
 ```
 
-Для автономной проверки без оборудования включите mock-профиль явно:
+В `full_system.launch.py` mock-профиль выбран по умолчанию. Если вся система
+запускается непосредственно на компьютере манипулятора с доступным SocketCAN,
+включите реальный профиль явно:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
-  use_mock_hardware:=true
+  use_mock_hardware:=false
 ```
 
 По умолчанию выбран механический захват. Чтобы использовать электромагнитный
@@ -94,6 +96,7 @@ ros2 launch ruka2_moveit_config full_system.launch.py end_effector_type:=none
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
+  use_mock_hardware:=false \
   can_interface:=vcan1.0
 ```
 

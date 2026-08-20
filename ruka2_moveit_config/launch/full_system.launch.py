@@ -50,8 +50,11 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "use_mock_hardware",
-                default_value="false",
-                description="Использовать mock-оборудование вместо реальной системы Cyphal",
+                default_value="true",
+                description=(
+                    "Использовать локальное mock-оборудование; для запуска всей "
+                    "системы на манипуляторе укажите false"
+                ),
             ),
             DeclareLaunchArgument(
                 "use_end_effector",

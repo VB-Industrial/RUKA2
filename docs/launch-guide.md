@@ -41,13 +41,13 @@ source install/setup.bash
 | Подключить MoveIt и RViz к уже работающим контроллерам | `ruka2_moveit_config/moveit.launch.py` |
 | Только посмотреть URDF и подвигать суставы ползунками | `ruka2_description/display.launch.py` |
 
-Для обычной работы рекомендуется `full_system.launch.py`. Раздельные запуски
-нужны, когда управление уже работает на этом или другом компьютере либо MoveIt
-требуется перезапустить независимо от оборудования.
+Для локального планирования и проверки без оборудования используйте
+`full_system.launch.py`: он по умолчанию работает с mock-оборудованием.
+Раздельные запуски нужны для реального манипулятора: контроллеры запускаются на
+его компьютере, а MoveIt и RViz — на пользовательском компьютере.
 
-> **Внимание:** рабочие launch-файлы по умолчанию используют реальный
-> hardware interface `ruka2_control/Ruka2System`. Для запуска без подключённого
-> оборудования всегда указывайте `use_mock_hardware:=true`.
+Отдельный `ros2_control.launch.py` по умолчанию использует реальный hardware
+interface `ruka2_control/Ruka2System`.
 
 ## Полная система: `full_system.launch.py`
 
@@ -62,31 +62,38 @@ source install/setup.bash
 - `mechanical_gripper_controller`, только если выбран механический захват и
   включён mock-профиль.
 
-### Реальная рука
+### Локальная симуляция
 
-По умолчанию выбираются реальный интерфейс, механический захват и CAN-интерфейс
-`vcan1.0`:
+По умолчанию выбираются mock-интерфейс и механический захват; подключение к CAN
+не требуется:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py
 ```
 
-Если рабочий SocketCAN-интерфейс имеет другое имя, укажите его явно:
+В этом режиме команды выполняет `mock_components/GenericSystem`, поэтому
+подключение к CAN и нижнему уровню не требуется.
+
+### Вся система на компьютере манипулятора
+
+Если MoveIt и RViz запускаются на том же компьютере, где доступен SocketCAN,
+включите реальный профиль явно:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
+  use_mock_hardware:=false \
+  end_effector_type:=none \
   can_interface:=can0
 ```
 
-### Проверка без оборудования
+Для стандартного интерфейса проекта:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
-  use_mock_hardware:=true
+  use_mock_hardware:=false \
+  end_effector_type:=none \
+  can_interface:=vcan1.0
 ```
-
-В этом режиме команды выполняет `mock_components/GenericSystem`, поэтому
-подключение к CAN и нижнему уровню не требуется.
 
 ### Выбор захвата
 
@@ -111,12 +118,11 @@ ros2 launch ruka2_moveit_config full_system.launch.py \
   end_effector_type:=none
 ```
 
-Аргументы можно объединять. Например, полная mock-система с электромагнитным
+Аргументы можно объединять. Например, локальная система с электромагнитным
 захватом:
 
 ```bash
 ros2 launch ruka2_moveit_config full_system.launch.py \
-  use_mock_hardware:=true \
   end_effector_type:=electromagnetic
 ```
 
@@ -253,7 +259,7 @@ ros2 launch ruka2_description display.launch.py \
 
 | Аргумент | Значение по умолчанию | Назначение |
 |---|---|---|
-| `use_mock_hardware` | `false` | `false` — реальный `Ruka2System`, `true` — тестовый `GenericSystem` |
+| `use_mock_hardware` | `true` в `full_system.launch.py`, `false` в остальных рабочих launch-файлах | `false` — реальный `Ruka2System`, `true` — тестовый `GenericSystem` |
 | `end_effector_type` | `mechanical` | `mechanical`, `electromagnetic` или `none` |
 | `can_interface` | `vcan1.0` | Имя SocketCAN-интерфейса реального оборудования |
 | `use_rviz` | `true` | Запускать ли RViz вместе с MoveIt |
