@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka">
+  <xacro:arg
+    name="initial_positions_file"
+    default="$(find ruka_spb)/config/initial_positions.yaml"
+  />
+  <xacro:arg name="use_mock_hardware" default="true"/>
+  <xacro:arg name="end_effector_type" default="mechanical"/>
+  <xacro:arg name="can_interface" default="vcan1.0"/>
+  <xacro:arg name="node_id" default="100"/>
+  <xacro:arg name="queue_length" default="1000"/>
+  <xacro:arg name="feedback_timeout" default="0.25"/>
+  <xacro:arg name="heartbeat_timeout" default="2.5"/>
+  <xacro:arg name="activation_timeout" default="5.0"/>
+  <xacro:arg name="startup_grace" default="1.0"/>
+  <xacro:arg name="require_all_joints_on_activate" default="true"/>
+
+  <xacro:property
+    name="selected_end_effector"
+    value="$(arg end_effector_type)"/>
+  <xacro:property
+    name="show_mechanical_end_effector"
+    value="${selected_end_effector == 'mechanical'}"/>
+  <xacro:property
+    name="show_electromagnetic_end_effector"
+    value="${selected_end_effector == 'electromagnetic'}"/>
+  <xacro:property
+    name="tool0_x"
+    value="${-0.0272404332 if show_electromagnetic_end_effector else 0.0}"/>
+  <xacro:property
+    name="tool0_z"
+    value="${0.0879375831 if show_electromagnetic_end_effector else (0.1162 if show_mechanical_end_effector else 0.0)}"/>
+  <xacro:property
+    name="tool0_pitch"
+    value="${-0.4363323130 if show_electromagnetic_end_effector else 0.0}"/>
+
+  <xacro:include filename="$(find ruka_spb)/config/ruka.urdf"/>
+  <xacro:include filename="$(find ruka_spb)/config/ruka.ros2_control.xacro"/>
+
+  <xacro:ruka_ros2_control
+    name="RukaSpbSystem"
+    initial_positions_file="$(arg initial_positions_file)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    end_effector_type="$(arg end_effector_type)"
+    can_interface="$(arg can_interface)"
+    node_id="$(arg node_id)"
+    queue_length="$(arg queue_length)"
+    feedback_timeout="$(arg feedback_timeout)"
+    heartbeat_timeout="$(arg heartbeat_timeout)"
+    activation_timeout="$(arg activation_timeout)"
+    startup_grace="$(arg startup_grace)"
+    require_all_joints_on_activate="$(arg require_all_joints_on_activate)"
+  />
+</robot>

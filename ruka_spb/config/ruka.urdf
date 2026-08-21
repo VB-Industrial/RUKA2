@@ -1,0 +1,874 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ruka">
+
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <material name="red">
+        <color rgba="1 0 0 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0 0 1 1"/>
+    </material>
+
+    <material name="gray">
+        <color rgba="0.45 0.45 0.45 1"/>
+    </material>
+
+    <link name="base_link">
+        <visual>
+          <origin rpy="0 0 0" xyz="0 0 0.025" />
+          <geometry>
+            <cylinder radius="0.09" length="0.05" />
+          </geometry>
+
+        <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.025" />
+          <geometry>
+            <cylinder radius="0.09" length="0.05" />
+          </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="joint_1" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <safety_controller k_position="100.0" k_velocity="200.0" soft_lower_limit="-2.908" soft_upper_limit="2.908" />
+
+        <limit effort="1000.0" lower="-2.91" upper="2.91" velocity="0.75"/>
+        <origin rpy="0 0 0" xyz="0 0 0.05"/>
+        <parent link="base_link"/>
+        <child link="link_01"/>
+
+    </joint>
+
+    <link name="link_01">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.016" />
+            <geometry>
+                <cylinder radius="0.047" length="0.032" />
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.016" />
+            <geometry>
+                <cylinder radius="0.047" length="0.032" />
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="-0.0365 0 0.085" />
+            <geometry>
+                <box size ="0.173 0.148 0.106"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+           <origin rpy="0 0 0" xyz="-0.0365 0 0.085" />
+            <geometry>
+                <box size ="0.173 0.148 0.106"/>
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="link_01__link_01_red" type="fixed">
+        <origin rpy="0 0 0" xyz="0.017 0 0"/>
+        <parent link="link_01"/>
+        <child link="link_01_red"/>
+    </joint>
+
+    <link name="link_01_red">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.088 0.1165" />
+            <geometry>
+                <box size="0.08 0.028 0.145"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.088 0.1165" />
+            <geometry>
+                <box size="0.08 0.028 0.145"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.088 0.1165" />
+            <geometry>
+                <box size="0.08 0.028 0.145"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.088 0.1165" />
+            <geometry>
+                <box size="0.08 0.028 0.145"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 -0.088 0.189" />
+            <geometry>
+                <cylinder radius="0.04" length="0.028"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+           <origin rpy="1.57 0 0" xyz="0 -0.088 0.189" />
+            <geometry>
+                <cylinder radius="0.04" length="0.028"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 0.088 0.189" />
+            <geometry>
+                <cylinder radius="0.04" length="0.028"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+           <origin rpy="1.57 0 0" xyz="0 0.088 0.189" />
+            <geometry>
+                <cylinder radius="0.04" length="0.028"/>
+            </geometry>
+          </collision>
+    </link>
+
+    <joint name="joint_2" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.518" soft_upper_limit="-0.052" /> -->
+
+        <limit effort="1000.0" lower="-3.37" upper="0.02" velocity="0.6"/>
+        <origin rpy="1.57 -1.57 0" xyz="0.017 0 0.189"/>   <!-- origin rpy="1.57 0 0"-->
+        <parent link="link_01"/>
+
+        <child link="link_02"/>
+    </joint>
+
+    <link name="link_02">
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+                <cylinder radius="0.038" length="0.148"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+             <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+                <cylinder radius="0.038" length="0.148"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.06775 0" />
+            <geometry>
+                <box size ="0.076 0.1355 0.116"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+          <origin rpy="0 0 0" xyz="0 0.06775 0" />
+            <geometry>
+                <box size ="0.076 0.1355 0.116"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0 0.14 0.055" />
+            <geometry>
+                <box size ="0.006 0.28 0.076"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0 0.14 0.055" />
+            <geometry>
+                <box size ="0.006 0.28 0.076"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0 0.14 -0.055" />
+            <geometry>
+                <box size ="0.006 0.28 0.076"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0 0.14 -0.055" />
+            <geometry>
+                <box size ="0.006 0.28 0.076"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.28 -0.055" />
+            <geometry>
+                <cylinder radius="0.038" length="0.006"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.28 -0.055" />
+            <geometry>
+                <cylinder radius="0.038" length="0.006"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.28 0.055" />
+            <geometry>
+                <cylinder radius="0.038" length="0.006"/>
+            </geometry>
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.28 0.055" />
+            <geometry>
+                <cylinder radius="0.038" length="0.006"/>
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="link_02__link_02_red" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0.181 0"/>
+        <parent link="link_02"/>
+        <child link="link_02_red"/>
+    </joint>
+
+    <link name="link_02_red">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.069" />
+            <geometry>
+                <box size="0.076 0.198 0.027"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.069" />
+            <geometry>
+                <box size="0.076 0.198 0.027"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 -0.069" />
+            <geometry>
+                <box size="0.076 0.198 0.027"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 -0.069" />
+            <geometry>
+                <box size="0.076 0.198 0.027"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.099 0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.099 0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.099 0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.099 0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.099 -0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.099 -0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.099 -0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+             <origin rpy="0 0 0" xyz="0 0.099 -0.069" />
+            <geometry>
+                <cylinder radius="0.038" length="0.027"/>
+            </geometry>
+
+          </collision>
+
+    </link>
+
+    <joint name="joint_3" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0.067" soft_upper_limit="5.178" /> -->
+
+        <limit effort="1000.0" lower="0.0" upper="5.11" velocity="0.75"/>
+        <origin rpy="0 0 0.0175" xyz="0 0.28 0"/>
+        <!-- !!!!!!!!!!!!!!!!!!!!! /> -->
+        <parent link="link_02"/>
+        <child link="link_03"/>
+    </joint>
+
+    <link name="link_03">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+                <cylinder radius="0.019" length="0.104" />
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+                <cylinder radius="0.019" length="0.104" />
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.04 0 0" />
+            <geometry>
+                <box size ="0.120 0.090 0.08"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0.04 0 0" />
+            <geometry>
+                <box size ="0.120 0.090 0.08"/>
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="link_03__link_03_red" type="fixed">
+        <origin rpy="0 0 0" xyz="0.04 0 0"/>
+        <parent link="link_03"/>
+        <child link="link_03_red"/>
+    </joint>
+
+
+    <link name="link_03_red">
+
+       <visual>
+            <origin rpy="0 0 0" xyz="0 0.05 0" />
+            <geometry>
+                <box size ="0.120 0.020 0.08"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+           <origin rpy="0 0 0" xyz="0 0.05 0" />
+            <geometry>
+                <box size ="0.120 0.020 0.08"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.05 0" />
+            <geometry>
+                <box size ="0.120 0.020 0.08"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.05 0" />
+            <geometry>
+                <box size ="0.120 0.020 0.08"/>
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="joint_4" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.818" soft_upper_limit="2.818" />
+
+        <limit effort="1000.0" lower="-2.42" upper="3.20" velocity="2.0"/>
+        <origin rpy="1.57 0 0" xyz="0.072 0 0"/>
+        <parent link="link_03"/>
+        <child link="link_04"/>
+    </joint>
+
+    <link name="link_04">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.0455" />
+            <geometry>
+                <cylinder radius="0.018" length="0.091" />
+            </geometry>
+
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+             <origin rpy="0 0 0" xyz="0 0 0.0455" />
+            <geometry>
+                <cylinder radius="0.018" length="0.091" />
+            </geometry>
+
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.135" />
+            <geometry>
+                <box size="0.06 0.097 0.088"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.135" />
+            <geometry>
+                <box size="0.06 0.097 0.088"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0.0515 0.174" />
+            <geometry>
+                <box size ="0.06 0.006 0.18"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.0515 0.174" />
+            <geometry>
+                <box size ="0.06 0.006 0.18"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.0515 0.174" />
+            <geometry>
+                <box size ="0.06 0.006 0.18"/>
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.0515 0.174" />
+            <geometry>
+                <box size ="0.06 0.006 0.18"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 0.04275 0.264" />
+            <geometry>
+                <cylinder radius="0.02" length="0.010" />
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="1.57 0 0" xyz="0 0.04275 0.264" />
+            <geometry>
+                <cylinder radius="0.02" length="0.010" />
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 -0.04275 0.264" />
+            <geometry>
+                <cylinder radius="0.02" length="0.010" />
+            </geometry>
+
+            <material name="white"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="1.57 0 0" xyz="0 -0.04275 0.264" />
+            <geometry>
+                <cylinder radius="0.02" length="0.010" />
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="link_04__link_04_red" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0.174"/>
+        <parent link="link_04"/>
+        <child link="link_04_red"/>
+    </joint>
+
+    <link name="link_04_red">
+
+       <visual>
+            <origin rpy="0 1.57 0" xyz="0 0.0655 0" />
+            <geometry>
+                <box size="0.18 0.022 0.06"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0 0.0655 0" />
+            <geometry>
+                <box size="0.18 0.022 0.06"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0 -0.0655 0" />
+            <geometry>
+                <box size="0.18 0.022 0.06"/>
+            </geometry>
+            <material name="red"/>
+
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0 -0.0655 0" />
+            <geometry>
+                <box size="0.18 0.022 0.06"/>
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 -0.0655 0.09" />
+            <geometry>
+                <cylinder radius="0.03" length="0.022" />
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="1.57 0 0" xyz="0 -0.0655 0.09" />
+            <geometry>
+                <cylinder radius="0.03" length="0.022" />
+            </geometry>
+          </collision>
+
+        <visual>
+            <origin rpy="1.57 0 0" xyz="0 0.0655 0.09" />
+            <geometry>
+                <cylinder radius="0.03" length="0.022" />
+            </geometry>
+
+        </visual>
+
+        <collision>
+            <origin rpy="1.57 0 0" xyz="0 0.0655 0.09" />
+            <geometry>
+                <cylinder radius="0.03" length="0.022" />
+            </geometry>
+          </collision>
+
+    </link>
+
+    <joint name="joint_5" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.388" soft_upper_limit="2.388" />
+
+        <limit effort="1000.0" lower="-2.44" upper="2.44" velocity="2.5"/>
+        <origin rpy="-1.57 0 0" xyz="0 0 0.264"/>
+        <parent link="link_04"/>
+        <child link="link_05"/>
+    </joint>
+
+    <link name="link_05">
+        <!-- Light body: 74 mm wide, 82 mm long and 100 mm high.
+             The J5 axis is 30 mm above its lower face. -->
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0.020 0 0" />
+            <geometry>
+                <box size="0.074 0.082 0.100" />
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0.020 0 0" />
+            <geometry>
+                <box size="0.074 0.082 0.100" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="link_05__link_05_red" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="link_05"/>
+        <child link="link_05_red"/>
+    </joint>
+
+    <link name="link_05_red">
+        <!-- Front cover towards the gripper: 20 mm thick. -->
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0.020 -0.051 0" />
+            <geometry>
+                <box size="0.074 0.020 0.100" />
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0.020 -0.051 0" />
+            <geometry>
+                <box size="0.074 0.020 0.100" />
+            </geometry>
+        </collision>
+
+        <!-- Rear cover: 27 mm thick. -->
+        <visual>
+            <origin rpy="0 1.57 0" xyz="0.020 0.0545 0" />
+            <geometry>
+                <box size="0.074 0.027 0.100" />
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 1.57 0" xyz="0.020 0.0545 0" />
+            <geometry>
+                <box size="0.074 0.027 0.100" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_6" type="revolute">
+        <axis xyz="0 0 1"/>
+
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.12" soft_upper_limit="3.12" />
+
+        <limit effort="1000.0" lower="-2.82" upper="2.84" velocity="6.0"/>
+        <origin rpy="1.57 0 0" xyz="0 -0.086 0"/>
+        <parent link="link_05"/>
+        <child link="link_06"/>
+    </joint>
+
+    <link name="link_06">
+        <!-- The distal face is the gripper mounting plane. -->
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 -0.0125" />
+            <geometry>
+                <cylinder radius="0.018" length="0.025" />
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 -0.0125" />
+            <geometry>
+                <cylinder radius="0.018" length="0.025" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="link_06__link_hand_cyl" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="link_06"/>
+        <child link="link_hand_cyl"/>
+    </joint>
+
+    <link name="link_hand_cyl">
+        <xacro:if value="${show_mechanical_end_effector}">
+            <inertial>
+                <mass value="0.01"/>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <inertia
+                    ixx="0.00001" ixy="0" ixz="0"
+                    iyy="0.00001" iyz="0" izz="0.00001"
+                />
+            </inertial>
+            <visual>
+                <origin rpy="0 0 1.57" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/gripper4310.stl"/>
+                </geometry>
+                <material name="blue"/>
+            </visual>
+            <collision>
+                <origin rpy="0 0 1.57" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/gripper4310.stl"/>
+                </geometry>
+            </collision>
+        </xacro:if>
+        <xacro:if value="${show_electromagnetic_end_effector}">
+            <visual name="electromagnetic_gripper_visual">
+                <origin
+                    rpy="0 0 -1.5707963268"
+                    xyz="-0.02 -0.0150980395 -0.0162865356"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/mag-gripper.stl"/>
+                </geometry>
+                <material name="gray"/>
+            </visual>
+            <collision name="electromagnetic_gripper_collision">
+                <origin
+                    rpy="0 0 -1.5707963268"
+                    xyz="-0.02 -0.0150980395 -0.0162865356"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/mag-gripper.stl"/>
+                </geometry>
+            </collision>
+        </xacro:if>
+    </link>
+
+    <joint name="link_06__tool0" type="fixed">
+        <origin rpy="0 ${tool0_pitch} 0" xyz="${tool0_x} 0 ${tool0_z}"/>
+        <parent link="link_06"/>
+        <child link="tool0"/>
+    </joint>
+    <link name="tool0"/>
+
+    <joint
+        name="link_hand_cyl__first_fin"
+        type="${'prismatic' if show_mechanical_end_effector else 'fixed'}">
+        <parent link="link_hand_cyl"/>
+        <child link="first_fin"/>
+        <origin rpy="1.57 0 3.14" xyz="0 0.005 0.0642"/>
+        <xacro:if value="${show_mechanical_end_effector}">
+            <axis xyz="0 0 1"/>
+            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+        </xacro:if>
+    </joint>
+
+    <link name="first_fin">
+        <xacro:if value="${show_mechanical_end_effector}">
+            <inertial>
+                <mass value="0.01"/>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <inertia
+                    ixx="0.00001" ixy="0" ixz="0"
+                    iyy="0.00001" iyz="0" izz="0.00001"
+                />
+            </inertial>
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/finger50mm-S.stl"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/finger50mm-S.stl"/>
+                </geometry>
+            </collision>
+        </xacro:if>
+    </link>
+
+    <joint
+        name="link_hand_cyl__second_fin"
+        type="${'prismatic' if show_mechanical_end_effector else 'fixed'}">
+        <parent link="link_hand_cyl"/>
+        <child link="second_fin"/>
+        <origin rpy="1.57 0 0" xyz="0 -0.005 0.0642"/>
+        <xacro:if value="${show_mechanical_end_effector}">
+            <axis xyz="0 0 1"/>
+            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            <mimic joint="link_hand_cyl__first_fin" multiplier="1.0" offset="0.0"/>
+        </xacro:if>
+    </joint>
+
+    <link name="second_fin">
+        <xacro:if value="${show_mechanical_end_effector}">
+            <inertial>
+                <mass value="0.01"/>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <inertia
+                    ixx="0.00001" ixy="0" ixz="0"
+                    iyy="0.00001" iyz="0" izz="0.00001"
+                />
+            </inertial>
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/finger50mm-S-1.stl"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ruka_spb/config/mesh/finger50mm-S-1.stl"/>
+                </geometry>
+            </collision>
+        </xacro:if>
+    </link>
+
+</robot>

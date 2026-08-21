@@ -1,0 +1,10 @@
+<library path="ruka_spb">
+  <class
+    name="ruka_spb/Ruka2System"
+    type="ruka_spb::Ruka2System"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Аппаратный интерфейс ros2_control для шести приводов манипулятора RUKA2.
+    </description>
+  </class>
+</library>
