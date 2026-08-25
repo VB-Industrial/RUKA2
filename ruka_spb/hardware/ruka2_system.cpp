@@ -385,9 +385,6 @@ CallbackReturn Ruka2System::on_activate(const rclcpp_lifecycle::State &)
 
 CallbackReturn Ruka2System::on_deactivate(const rclcpp_lifecycle::State &)
 {
-  if (active_) {
-    send_hold_commands();
-  }
   active_ = false;
   publish_diagnostics(steady_microseconds(), true);
   return CallbackReturn::SUCCESS;
@@ -401,18 +398,12 @@ CallbackReturn Ruka2System::on_cleanup(const rclcpp_lifecycle::State &)
 
 CallbackReturn Ruka2System::on_shutdown(const rclcpp_lifecycle::State &)
 {
-  if (active_) {
-    send_hold_commands();
-  }
   stop_transport();
   return CallbackReturn::SUCCESS;
 }
 
 CallbackReturn Ruka2System::on_error(const rclcpp_lifecycle::State &)
 {
-  if (active_) {
-    send_hold_commands();
-  }
   stop_transport();
   return CallbackReturn::SUCCESS;
 }
@@ -472,19 +463,6 @@ void Ruka2System::send_joint_command(
   runtime_->interface->send_msg<JointMessage>(
     &message, kServoCommandSubjectIds[joint_index],
     &runtime_->command_transfer_ids[joint_index]);
-}
-
-void Ruka2System::send_hold_commands()
-{
-  if (!runtime_ || !runtime_->interface) {
-    return;
-  }
-  for (std::size_t index = 0; index < kJointCount; ++index) {
-    send_joint_command(
-      index, static_cast<float>(joint_position_state_[index]), 0.0F,
-      static_cast<float>(servo_acceleration_));
-  }
-  runtime_->interface->process_tx_once();
 }
 
 bool Ruka2System::all_joints_fresh(std::uint64_t now_us, std::string * reason) const

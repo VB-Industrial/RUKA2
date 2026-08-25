@@ -48,7 +48,6 @@ private:
   CallbackReturn start_transport();
   void stop_transport();
   void send_heartbeat();
-  void send_hold_commands();
   void send_joint_command(
     std::size_t joint_index, float position, float velocity, float acceleration);
   bool all_joints_fresh(std::uint64_t now_us, std::string * reason = nullptr) const;
