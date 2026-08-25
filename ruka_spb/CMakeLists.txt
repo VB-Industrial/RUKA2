@@ -53,6 +53,11 @@ install(
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+install(
+  PROGRAMS scripts/send_joint_goal.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME send_joint_goal
+)
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(

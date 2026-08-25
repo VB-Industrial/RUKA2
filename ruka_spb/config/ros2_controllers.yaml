@@ -26,6 +26,7 @@ ruka_arm_controller:
     state_interfaces:
       - position
       - velocity
+    set_last_command_interface_value_as_state_on_activation: false
     allow_nonzero_velocity_at_trajectory_end: true
 
 ruka_hand_controller:

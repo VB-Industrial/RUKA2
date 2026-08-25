@@ -41,9 +41,9 @@
     <joint name="joint_1" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <safety_controller k_position="100.0" k_velocity="200.0" soft_lower_limit="-2.908" soft_upper_limit="2.908" />
+        <safety_controller k_position="100.0" k_velocity="200.0" soft_lower_limit="-2.833300981" soft_upper_limit="2.833300981" />
 
-        <limit effort="1000.0" lower="-2.91" upper="2.91" velocity="0.75"/>
+        <limit effort="1000.0" lower="-2.91" upper="2.91" velocity="0.7"/>
         <origin rpy="0 0 0" xyz="0 0 0.05"/>
         <parent link="base_link"/>
         <child link="link_01"/>
@@ -156,9 +156,9 @@
     <joint name="joint_2" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.518" soft_upper_limit="-0.052" /> -->
+        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.301354284" soft_upper_limit="-0.048645716" /> -->
 
-        <limit effort="1000.0" lower="-3.37" upper="0.02" velocity="0.6"/>
+        <limit effort="1000.0" lower="-3.37" upper="0.02" velocity="0.5"/>
         <origin rpy="1.57 -1.57 0" xyz="0.017 0 0.189"/>   <!-- origin rpy="1.57 0 0"-->
         <parent link="link_01"/>
 
@@ -370,9 +370,9 @@
     <joint name="joint_3" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0.067" soft_upper_limit="5.178" /> -->
+        <!-- <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0.076699019" soft_upper_limit="5.033300981" /> -->
 
-        <limit effort="1000.0" lower="0.0" upper="5.11" velocity="0.75"/>
+        <limit effort="1000.0" lower="0.0" upper="5.11" velocity="0.5"/>
         <origin rpy="0 0 0.0175" xyz="0 0.28 0"/>
         <!-- !!!!!!!!!!!!!!!!!!!!! /> -->
         <parent link="link_02"/>
@@ -458,9 +458,9 @@
     <joint name="joint_4" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.818" soft_upper_limit="2.818" />
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.343300981" soft_upper_limit="3.123300981" />
 
-        <limit effort="1000.0" lower="-2.42" upper="3.20" velocity="2.0"/>
+        <limit effort="1000.0" lower="-2.42" upper="3.20" velocity="1.0"/>
         <origin rpy="1.57 0 0" xyz="0.072 0 0"/>
         <parent link="link_03"/>
         <child link="link_04"/>
@@ -639,9 +639,9 @@
     <joint name="joint_5" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.388" soft_upper_limit="2.388" />
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.313300981" soft_upper_limit="2.313300981" />
 
-        <limit effort="1000.0" lower="-2.44" upper="2.44" velocity="2.5"/>
+        <limit effort="1000.0" lower="-2.39" upper="2.39" velocity="1.0"/>
         <origin rpy="-1.57 0 0" xyz="0 0 0.264"/>
         <parent link="link_04"/>
         <child link="link_05"/>
@@ -709,9 +709,9 @@
     <joint name="joint_6" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.12" soft_upper_limit="3.12" />
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.743300981" soft_upper_limit="2.763300981" />
 
-        <limit effort="1000.0" lower="-2.82" upper="2.84" velocity="6.0"/>
+        <limit effort="1000.0" lower="-2.82" upper="2.84" velocity="1.0"/>
         <origin rpy="1.57 0 0" xyz="0 -0.086 0"/>
         <parent link="link_05"/>
         <child link="link_06"/>

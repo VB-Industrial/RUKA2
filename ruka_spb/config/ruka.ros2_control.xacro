@@ -42,7 +42,7 @@
           <param name="heartbeat_timeout">${heartbeat_timeout}</param>
           <param name="activation_timeout">${activation_timeout}</param>
           <param name="startup_grace">${startup_grace}</param>
-          <param name="maximum_servo_velocity">0.1</param>
+          <param name="maximum_servo_velocity">1.0</param>
           <param name="servo_acceleration">1.0</param>
           <param name="require_all_joints_on_activate">${require_all_joints_on_activate}</param>
         </xacro:unless>

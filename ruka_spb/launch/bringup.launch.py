@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
@@ -14,10 +14,13 @@ def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     end_effector_type = LaunchConfiguration("end_effector_type")
     can_interface = LaunchConfiguration("can_interface")
+    fastdds_profile = os.path.join(
+        get_package_share_directory("ruka_spb"), "config", "fastdds_udp.xml"
+    )
 
     use_mock_hardware_arg = DeclareLaunchArgument(
         "use_mock_hardware",
-        default_value="true",
+        default_value="false",
         description="Использовать локальную имитацию оборудования вместо приводов RUKA2",
     )
     can_interface_arg = DeclareLaunchArgument(
@@ -27,9 +30,8 @@ def generate_launch_description():
     )
     end_effector_type_arg = DeclareLaunchArgument(
         "end_effector_type",
-        default_value="mechanical",
         choices=["mechanical", "electromagnetic", "none"],
-        description="Выбрать механический, электромагнитный захват или запуск без захвата",
+        description="Обязательно выбрать механический, электромагнитный захват или запуск без захвата",
     )
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
@@ -124,6 +126,7 @@ def generate_launch_description():
             ("/controller_manager/robot_description", "/robot_description"),
         ],
         output="screen",
+        emulate_tty=True,
     )
 
     joint_state_broadcaster = Node(
@@ -134,6 +137,8 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
+        output="screen",
+        emulate_tty=True,
     )
     arm_controller = Node(
         package="controller_manager",
@@ -143,6 +148,8 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
+        output="screen",
+        emulate_tty=True,
     )
     hand_controller = Node(
         package="controller_manager",
@@ -152,6 +159,8 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
+        output="screen",
+        emulate_tty=True,
         condition=IfCondition(
             PythonExpression(["'", end_effector_type, "' == 'mechanical'"])
         ),
@@ -212,6 +221,10 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            SetEnvironmentVariable("RMW_IMPLEMENTATION", "rmw_fastrtps_cpp"),
+            SetEnvironmentVariable("RMW_FASTRTPS_USE_QOS_FROM_XML", "1"),
+            SetEnvironmentVariable("FASTDDS_DEFAULT_PROFILES_FILE", fastdds_profile),
+            SetEnvironmentVariable("FASTRTPS_DEFAULT_PROFILES_FILE", fastdds_profile),
             use_mock_hardware_arg,
             end_effector_type_arg,
             can_interface_arg,
