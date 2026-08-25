@@ -69,4 +69,9 @@ ament_export_dependencies(
   rclcpp_lifecycle
 )
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_joint_5_limits test/test_joint_5_limits.py)
+endif()
+
 ament_package()

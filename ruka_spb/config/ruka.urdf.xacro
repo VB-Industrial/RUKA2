@@ -24,6 +24,13 @@
   <xacro:property
     name="show_electromagnetic_end_effector"
     value="${selected_end_effector == 'electromagnetic'}"/>
+  <!-- The mechanical gripper limits positive J5 travel to avoid interference. -->
+  <xacro:property
+    name="joint_5_upper_limit"
+    value="${1.308996939 if show_mechanical_end_effector else 2.39}"/>
+  <xacro:property
+    name="joint_5_soft_upper_limit"
+    value="${1.308996939 if show_mechanical_end_effector else 2.313300981}"/>
   <xacro:property
     name="tool0_x"
     value="${-0.0272404332 if show_electromagnetic_end_effector else 0.0}"/>

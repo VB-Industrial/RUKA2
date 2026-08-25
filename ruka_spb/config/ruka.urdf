@@ -639,9 +639,9 @@
     <joint name="joint_5" type="revolute">
         <axis xyz="0 0 1"/>
 
-        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.313300981" soft_upper_limit="2.313300981" />
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.313300981" soft_upper_limit="${joint_5_soft_upper_limit}" />
 
-        <limit effort="1000.0" lower="-2.39" upper="2.39" velocity="1.0"/>
+        <limit effort="1000.0" lower="-2.39" upper="${joint_5_upper_limit}" velocity="1.0"/>
         <origin rpy="-1.57 0 0" xyz="0 0 0.264"/>
         <parent link="link_04"/>
         <child link="link_05"/>
