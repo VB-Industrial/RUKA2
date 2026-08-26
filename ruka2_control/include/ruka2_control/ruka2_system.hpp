@@ -68,6 +68,7 @@ private:
   double activation_timeout_s_{5.0};
   double startup_grace_s_{1.0};
   double maximum_servo_velocity_{0.1};
+  double servo_acceleration_{1.0};
   bool require_all_joints_on_activate_{true};
   bool active_{false};
 };

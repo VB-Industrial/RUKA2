@@ -1,41 +1,39 @@
-# Ограничения скорости планирования составляют 16/9 от исходных консервативных
-# значений. При коэффициенте RViz 0.1 получается около 0.0178 рад/с. Реальные
-# команды по-прежнему ограничены значением 0.1 рад/с в неизменённом аппаратном
-# интерфейсе.
+# Ограничения планирования согласованы с реальными пределами аппаратного
+# интерфейса: 0.1 рад/с по скорости и 1.0 рад/с^2 по ускорению.
 default_velocity_scaling_factor: 1.0
 default_acceleration_scaling_factor: 0.1
 
 joint_limits:
   joint_1:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 1.333333
+    max_acceleration: 1.0
   joint_2:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 1.333333
+    max_acceleration: 1.0
   joint_3:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 1.333333
+    max_acceleration: 1.0
   joint_4:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 1.333333
+    max_acceleration: 1.0
   joint_5:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 1.333333
+    max_acceleration: 1.0
   joint_6:
     has_velocity_limits: true
-    max_velocity: 0.177778
+    max_velocity: 0.1
     has_acceleration_limits: true
-    max_acceleration: 2.666667
+    max_acceleration: 1.0
   link_hand_cyl__first_fin:
     has_velocity_limits: true
     max_velocity: 0.2

@@ -61,25 +61,15 @@ def test_arm_limits_and_meshes_come_from_canonical_model():
         "joint_5": ("-2.39", "2.39", "2.5"),
         "joint_6": ("-2.82", "2.84", "6.0"),
     }
-    expected_soft_limits = {
-        "joint_1": ("-2.833300981", "2.833300981"),
-        "joint_2": ("-3.293300981", "-0.056699019"),
-        "joint_3": ("0.076699019", "5.033300981"),
-        "joint_4": ("-2.343300981", "3.123300981"),
-        "joint_5": ("-2.313300981", "2.313300981"),
-        "joint_6": ("-2.743300981", "2.763300981"),
-    }
     joints = {joint.attrib["name"]: joint for joint in robot.findall("joint")}
     for name, expected in expected_limits.items():
         limit = joints[name].find("limit")
         assert limit is not None
         assert (limit.attrib["lower"], limit.attrib["upper"], limit.attrib["velocity"]) == expected
-        safety = joints[name].find("safety_controller")
-        assert safety is not None
-        assert (
-            safety.attrib["soft_lower_limit"],
-            safety.attrib["soft_upper_limit"],
-        ) == expected_soft_limits[name]
+        # MoveIt должен использовать калиброванные жёсткие границы из limit.
+        # Дополнительный safety_controller сузил бы их и сделал допустимое
+        # положение около физического нуля некорректным стартовым состоянием.
+        assert joints[name].find("safety_controller") is None
 
     mesh_uris = {mesh.attrib["filename"] for mesh in robot.findall(".//mesh")}
     assert mesh_uris == {

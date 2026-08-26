@@ -81,6 +81,8 @@ def test_real_hardware_is_default_and_exports_only_six_arm_joints():
     assert control is not None
     assert control.findtext("hardware/plugin") == "ruka2_control/Ruka2System"
     assert control.findtext("hardware/param[@name='can_interface']") == "vcan1.0"
+    assert control.findtext("hardware/param[@name='maximum_servo_velocity']") == "0.1"
+    assert control.findtext("hardware/param[@name='servo_acceleration']") == "1.0"
     assert {joint.attrib["name"] for joint in control.findall("joint")} == ARM_JOINTS
     for joint_name in PASSIVE_JOINTS:
         joint = robot.find(f"./joint[@name='{joint_name}']")

@@ -266,12 +266,14 @@ CallbackReturn Ruka2System::on_init(const hardware_interface::HardwareInfo & har
   activation_timeout_s_ = numeric_parameter<double>(info_, "activation_timeout", 5.0);
   startup_grace_s_ = numeric_parameter<double>(info_, "startup_grace", 1.0);
   maximum_servo_velocity_ = numeric_parameter<double>(info_, "maximum_servo_velocity", 0.1);
+  servo_acceleration_ = numeric_parameter<double>(info_, "servo_acceleration", 1.0);
   require_all_joints_on_activate_ =
     bool_parameter(info_, "require_all_joints_on_activate", true);
 
   if (node_id_ != kControllerNodeId || queue_length_ == 0U || feedback_timeout_s_ <= 0.0 ||
     heartbeat_timeout_s_ <= 0.0 || activation_timeout_s_ < 0.0 || startup_grace_s_ < 0.0 ||
-    maximum_servo_velocity_ <= 0.0)
+    !std::isfinite(maximum_servo_velocity_) || maximum_servo_velocity_ <= 0.0 ||
+    !std::isfinite(servo_acceleration_) || servo_acceleration_ <= 0.0)
   {
     RCLCPP_ERROR(get_logger(), "Invalid RUKA2 hardware parameters");
     return CallbackReturn::ERROR;
@@ -478,7 +480,9 @@ void Ruka2System::send_hold_commands()
     return;
   }
   for (std::size_t index = 0; index < kJointCount; ++index) {
-    send_joint_command(index, static_cast<float>(joint_position_state_[index]), 0.0F, 0.0F);
+    send_joint_command(
+      index, static_cast<float>(joint_position_state_[index]), 0.0F,
+      static_cast<float>(servo_acceleration_));
   }
   runtime_->interface->process_tx_once();
 }
@@ -628,7 +632,8 @@ hardware_interface::return_type Ruka2System::write(const rclcpp::Time &, const r
     const auto velocity = static_cast<float>(std::min(
       std::fabs(joint_velocity_command_[index]), maximum_servo_velocity_));
     send_joint_command(
-      index, static_cast<float>(joint_position_command_[index]), velocity, 0.0F);
+      index, static_cast<float>(joint_position_command_[index]), velocity,
+      static_cast<float>(servo_acceleration_));
   }
   runtime_->interface->loop();
   return hardware_interface::return_type::OK;
