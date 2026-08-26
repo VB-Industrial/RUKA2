@@ -14,6 +14,7 @@
   <xacro:arg name="activation_timeout" default="5.0"/>
   <xacro:arg name="startup_grace" default="1.0"/>
   <xacro:arg name="require_all_joints_on_activate" default="true"/>
+  <xacro:arg name="gripper_can_interface" default="vcan1.2"/>
 
   <xacro:property
     name="selected_end_effector"
@@ -57,5 +58,6 @@
     activation_timeout="$(arg activation_timeout)"
     startup_grace="$(arg startup_grace)"
     require_all_joints_on_activate="$(arg require_all_joints_on_activate)"
+    gripper_can_interface="$(arg gripper_can_interface)"
   />
 </robot>

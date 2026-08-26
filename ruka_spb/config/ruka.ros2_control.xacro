@@ -15,7 +15,7 @@
 
   <xacro:macro
     name="ruka_ros2_control"
-    params="name initial_positions_file use_mock_hardware:=true end_effector_type:=mechanical can_interface:=vcan1.0 node_id:=100 queue_length:=1000 feedback_timeout:=0.25 heartbeat_timeout:=2.5 activation_timeout:=5.0 startup_grace:=1.0 require_all_joints_on_activate:=true">
+    params="name initial_positions_file use_mock_hardware:=true end_effector_type:=mechanical can_interface:=vcan1.0 node_id:=100 queue_length:=1000 feedback_timeout:=0.25 heartbeat_timeout:=2.5 activation_timeout:=5.0 startup_grace:=1.0 require_all_joints_on_activate:=true gripper_can_interface:=vcan1.2 gripper_controller_node_id:=101 gripper_drive_node_id:=11 gripper_feedback_subject_id:=3811 gripper_command_subject_id:=2118 gripper_queue_length:=1000 gripper_feedback_timeout:=12.0 gripper_heartbeat_timeout:=2.5 gripper_activation_timeout:=8.0 gripper_motor_closed_angle:=-0.3880 gripper_motor_open_angle:=2.1824">
     <xacro:property
       name="initial_positions"
       value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"
@@ -57,19 +57,72 @@
     </ros2_control>
 
     <xacro:if value="${use_mechanical_gripper}">
-      <ros2_control name="${name}Gripper" type="system">
-        <hardware>
-          <plugin>mock_components/GenericSystem</plugin>
-          <param name="calculate_dynamics">false</param>
-        </hardware>
-        <xacro:ruka_controlled_joint joint_name="link_hand_cyl__first_fin" velocity_command="false"/>
-        <joint name="link_hand_cyl__second_fin">
-          <state_interface name="position">
-            <param name="initial_value">${initial_positions['link_hand_cyl__second_fin']}</param>
-          </state_interface>
-          <state_interface name="velocity"/>
-        </joint>
-      </ros2_control>
+      <!-- Preserve the existing MoveIt/mock contract exactly. -->
+      <xacro:if value="${use_mock_hardware_bool}">
+        <ros2_control name="${name}Gripper" type="system">
+          <hardware>
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="calculate_dynamics">false</param>
+          </hardware>
+          <joint name="link_hand_cyl__first_fin">
+            <command_interface name="position"/>
+            <command_interface name="effort"/>
+            <state_interface name="position">
+              <param name="initial_value">${initial_positions['link_hand_cyl__first_fin']}</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+          </joint>
+          <joint name="link_hand_cyl__second_fin">
+            <state_interface name="position">
+              <param name="initial_value">${initial_positions['link_hand_cyl__second_fin']}</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+          </joint>
+        </ros2_control>
+      </xacro:if>
+
+      <!-- On the real robot the gripper is an independent VBDrive/Cyphal system. -->
+      <xacro:unless value="${use_mock_hardware_bool}">
+        <ros2_control name="${name}Gripper" type="system">
+          <hardware>
+            <plugin>ruka_spb/VBDriveGripperSystem</plugin>
+            <param name="can_interface">${gripper_can_interface}</param>
+            <param name="controller_node_id">${gripper_controller_node_id}</param>
+            <param name="drive_node_id">${gripper_drive_node_id}</param>
+            <param name="feedback_subject_id">${gripper_feedback_subject_id}</param>
+            <param name="command_subject_id">${gripper_command_subject_id}</param>
+            <param name="queue_length">${gripper_queue_length}</param>
+            <param name="feedback_timeout">${gripper_feedback_timeout}</param>
+            <param name="heartbeat_timeout">${gripper_heartbeat_timeout}</param>
+            <param name="activation_timeout">${gripper_activation_timeout}</param>
+            <param name="joint_closed_position">0.008</param>
+            <param name="joint_open_position">0.025</param>
+            <param name="motor_closed_angle">${gripper_motor_closed_angle}</param>
+            <param name="motor_open_angle">${gripper_motor_open_angle}</param>
+            <param name="maximum_motor_velocity">2.0</param>
+            <param name="maximum_motor_torque">0.50</param>
+            <param name="warning_motor_torque">0.35</param>
+            <param name="maximum_joint_force">30.0</param>
+            <param name="default_opening_force">9.64</param>
+            <param name="default_closing_force">-9.64</param>
+            <param name="angle_kp">2.5</param>
+            <param name="velocity_kp">0.0</param>
+            <param name="current_kp">4.0</param>
+            <param name="current_ki">1600.0</param>
+            <param name="command_refresh_period">0.05</param>
+            <param name="position_command_deadband">0.0001</param>
+            <param name="effort_slew_rate">1.0</param>
+          </hardware>
+          <joint name="link_hand_cyl__first_fin">
+            <command_interface name="position"/>
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+          </joint>
+        </ros2_control>
+      </xacro:unless>
     </xacro:if>
   </xacro:macro>
 </robot>

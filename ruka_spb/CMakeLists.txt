@@ -15,6 +15,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   hardware/ruka2_system.cpp
+  hardware/vbdrive_gripper_system.cpp
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -72,6 +73,7 @@ ament_export_dependencies(
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_joint_5_limits test/test_joint_5_limits.py)
+  ament_add_pytest_test(test_gripper_contract test/test_gripper_contract.py)
 endif()
 
 ament_package()

@@ -11,6 +11,9 @@ controller_manager:
     ruka_hand_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+    ruka_gripper_effort_controller:
+      type: forward_command_controller/ForwardCommandController
+
 ruka_arm_controller:
   ros__parameters:
     joints:
@@ -38,3 +41,17 @@ ruka_hand_controller:
     state_interfaces:
       - position
       - velocity
+    constraints:
+      # The path tolerance covers the complete 0.017 m finger stroke, while
+      # the goal tolerance still requires the final measured position.
+      goal_time: 3.0
+      stopped_velocity_tolerance: 0.0005
+      link_hand_cyl__first_fin:
+        trajectory: 0.018
+        goal: 0.001
+
+ruka_gripper_effort_controller:
+  ros__parameters:
+    joints:
+      - link_hand_cyl__first_fin
+    interface_name: effort

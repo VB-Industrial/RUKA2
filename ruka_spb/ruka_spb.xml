@@ -7,4 +7,10 @@
       Аппаратный интерфейс ros2_control для шести приводов манипулятора RUKA2.
     </description>
   </class>
+  <class
+    name="ruka_spb/VBDriveGripperSystem"
+    type="ruka_spb::VBDriveGripperSystem"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>Separate Cyphal/VBDrive interface for the mechanical gripper.</description>
+  </class>
 </library>

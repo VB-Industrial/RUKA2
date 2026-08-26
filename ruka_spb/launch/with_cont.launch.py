@@ -13,6 +13,7 @@ def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     end_effector_type = LaunchConfiguration("end_effector_type")
     can_interface = LaunchConfiguration("can_interface")
+    gripper_can_interface = LaunchConfiguration("gripper_can_interface")
     fastdds_profile = os.path.join(
         get_package_share_directory("ruka_spb"), "config", "fastdds_udp.xml"
     )
@@ -25,6 +26,7 @@ def generate_launch_description():
                 "use_mock_hardware": use_mock_hardware,
                 "end_effector_type": end_effector_type,
                 "can_interface": can_interface,
+                "gripper_can_interface": gripper_can_interface,
             },
         )
         .robot_description_semantic(
@@ -72,7 +74,6 @@ def generate_launch_description():
             ("/controller_manager/robot_description", "/robot_description"),
         ],
         output="screen",
-        emulate_tty=True,
     )
 
     joint_state_broadcaster = Node(
@@ -83,8 +84,6 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
-        output="screen",
-        emulate_tty=True,
     )
     arm_controller = Node(
         package="controller_manager",
@@ -94,8 +93,6 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
-        output="screen",
-        emulate_tty=True,
     )
     hand_controller = Node(
         package="controller_manager",
@@ -105,22 +102,6 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager",
         ],
-        output="screen",
-        emulate_tty=True,
-        condition=IfCondition(
-            PythonExpression(["'", end_effector_type, "' == 'mechanical'"])
-        ),
-    )
-    gripper_effort_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "ruka_gripper_effort_controller",
-            "--controller-manager",
-            "/controller_manager",
-        ],
-        output="screen",
-        emulate_tty=True,
         condition=IfCondition(
             PythonExpression(["'", end_effector_type, "' == 'mechanical'"])
         ),
@@ -134,18 +115,24 @@ def generate_launch_description():
             SetEnvironmentVariable("FASTRTPS_DEFAULT_PROFILES_FILE", fastdds_profile),
             DeclareLaunchArgument(
                 "use_mock_hardware",
-                default_value="false",
+                default_value="true",
                 description="Использовать локальную имитацию оборудования вместо приводов RUKA2",
             ),
             DeclareLaunchArgument(
                 "end_effector_type",
+                default_value="mechanical",
                 choices=["mechanical", "electromagnetic", "none"],
-                description="Обязательно выбрать механический, электромагнитный захват или запуск без захвата",
+                description="Выбрать механический, электромагнитный захват или запуск без захвата",
             ),
             DeclareLaunchArgument(
                 "can_interface",
                 default_value="vcan1.0",
                 description="Интерфейс SocketCAN для реального оборудования RUKA2",
+            ),
+            DeclareLaunchArgument(
+                "gripper_can_interface",
+                default_value="vcan1.2",
+                description="Интерфейс SocketCAN для механического захвата VBDrive",
             ),
             static_tf_node,
             robot_state_publisher,
@@ -153,6 +140,5 @@ def generate_launch_description():
             joint_state_broadcaster,
             arm_controller,
             hand_controller,
-            gripper_effort_controller,
         ]
     )

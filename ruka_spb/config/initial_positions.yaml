@@ -5,5 +5,5 @@ initial_positions:
   joint_4: 0.0
   joint_5: 0.0
   joint_6: 0.0
-  link_hand_cyl__first_fin: 0.0
-  link_hand_cyl__second_fin: 0.0
+  link_hand_cyl__first_fin: 0.008
+  link_hand_cyl__second_fin: 0.008

@@ -802,7 +802,7 @@
         <origin rpy="1.57 0 3.14" xyz="0 0.005 0.0642"/>
         <xacro:if value="${show_mechanical_end_effector}">
             <axis xyz="0 0 1"/>
-            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            <limit effort="15" lower="0.008" upper="0.025" velocity="0.012"/>
         </xacro:if>
     </joint>
 
@@ -840,7 +840,7 @@
         <origin rpy="1.57 0 0" xyz="0 -0.005 0.0642"/>
         <xacro:if value="${show_mechanical_end_effector}">
             <axis xyz="0 0 1"/>
-            <limit effort="20" lower="0.0" upper="0.01" velocity="0.2"/>
+            <limit effort="15" lower="0.008" upper="0.025" velocity="0.012"/>
             <mimic joint="link_hand_cyl__first_fin" multiplier="1.0" offset="0.0"/>
         </xacro:if>
     </joint>
